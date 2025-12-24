@@ -21,7 +21,7 @@ class ApartmentService
         return Apartment::latest()->get();
     }
 
-public function store(array $data, array $images=[], int $userId): Apartment
+  public function store(array $data, array $images=[], int $userId): Apartment
 {
     return DB::transaction(function () use ($data, $images, $userId) {
 
@@ -37,7 +37,6 @@ public function store(array $data, array $images=[], int $userId): Apartment
     });
 }
 
-
   public function update(Apartment $apartment, array $data, array $images = []): Apartment
     {
         return DB::transaction(function () use ($apartment, $data, $images) {
@@ -51,17 +50,6 @@ public function store(array $data, array $images=[], int $userId): Apartment
             return $apartment->fresh();
         });
     }
-
-
-
-    // public function checkDuplicate(array $data): bool
-    // {
-    // return Apartment::whereRaw('LOWER(city) = ?', [mb_strtolower($data['city'])])
-    //     ->whereRaw('LOWER(governorate) = ?', [mb_strtolower($data['governorate'])])
-    //     ->whereRaw('LOWER(area) = ?', [mb_strtolower($data['area'])])
-    //     ->where('floor_number', $data['floor_number'])
-    //     ->exists();
-    // }
 
    public function delete(Apartment $apartment): bool
     {

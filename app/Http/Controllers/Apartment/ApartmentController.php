@@ -13,6 +13,7 @@ use App\Http\Requests\Apartment\DeleteApartmentRequest;
 use App\Http\Resources\ApartmentResource;
 use App\Models\Apartment;
 use App\Service\Apartment\ApartmentFilteringService;
+use App\Service\Apartment\ApartmentFilteringService as ApartmentApartmentFilteringService;
 use App\Service\Apartment\ApartmentService;
 use Exception;
 
@@ -25,14 +26,7 @@ class ApartmentController extends Controller
       return response()->json([
         'status' => true,
         'data'=> ApartmentResource::collection($apartments),
-            // 'meta' => [
-            // 'current_page' => $apartments->url($apartments->currentPage()),
-            // 'last_page' => $apartments->url($apartments->lastPage()),
-            // 'per_page' => $apartments->perPage(),
-            // 'next_page'  => $apartments->nextPageUrl(),
-            // 'previous_page'=> $apartments->previousPageUrl(),
-            // 'total' => $apartments->total(),
-        //],
+    
     ]);
      
     }
@@ -107,6 +101,14 @@ public function store(StoreApartmentRequest $request, ApartmentService $service)
        'status'=>true,
        'data'=>$apartmentService->apartmentOwner($apartment),
      ]);
+    }
+    public function showLatest(ApartmentFilteringService $apartmentFilteringService)
+    {
+        $latest=$apartmentFilteringService->showLatest();
+        return response()->json([
+            'status'=>true,
+            'date'=>apartmentResource::collection($latest),
+        ]);
     }
 
 

@@ -91,5 +91,7 @@ Route::prefix('apartment')->
         Route::post('/updateApartment/{apartment}',[ApartmentController::class,'update']);
         Route::post('/apartmentFiltering',[ApartmentController::class,'filter']);
         Route::get('/showApartmentOwner/{apartment}',[ApartmentController::class,'apartmentOwner']);
+        Route::get('/showLatestApartments',[ApartmentController::class,'showLatest']);
+
    });
    

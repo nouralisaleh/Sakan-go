@@ -22,7 +22,7 @@ class ApartmentFilteringService{
         $query->where('is_furnished', $filters['is_furnished']);
     }
     if (!empty($filters['latest'])) {
-        $query->orderByDesc('id')->limit($filters['latest']); // آخر N شقق
+        $query->latest()->limit(5); 
     }
     if (!empty($filters['rooms'])) {
         $query->where('rooms', $filters['rooms']);
@@ -44,7 +44,10 @@ class ApartmentFilteringService{
 
     return $query->get();
 }
-
+public function showLatest()
+{
+    return Apartment::latest()->limit(8)->get();
+}
     
 
 }

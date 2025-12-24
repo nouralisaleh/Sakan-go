@@ -18,12 +18,7 @@ class StoreApartmentRequest extends FormRequest
      return true;
     }
 
-// protected function failedAuthorization()
-// {
-//     throw new AuthorizationException(
-//         __('apartment.only_owner_allowed')
-//     );
-// }
+
 
 
     public function rules(): array
