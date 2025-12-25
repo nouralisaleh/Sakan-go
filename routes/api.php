@@ -63,6 +63,8 @@ Route::prefix('user')->group(function () {
         Route::post('refresh', [UserAuthController::class, 'refresh']);
         Route::post('upgrade',[UserController::class,'upgrade']);
         Route::post('logout', [UserAuthController::class, 'logout']);
+        Route::post('start-chat',[UserController::class,'startChat']);
+        Route::get('user-chats',[UserController::class,'inbox']);
     });
 });
 

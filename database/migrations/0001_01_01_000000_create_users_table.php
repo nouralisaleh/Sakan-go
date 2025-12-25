@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('status', ['newUser', 'pending', 'rejected', 'approved'])->default('newUser');
             $table->enum('role', ['tenant', 'owner'])->default('tenant');
             $table->text('rejected_reason')->nullable();
+            $table->string('fcm_token');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -26,5 +27,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('users');
     }
-    
+
 };
