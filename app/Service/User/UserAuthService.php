@@ -91,18 +91,16 @@ class UserAuthService
             ];
         }
 
-        // OTP منتهي الصلاحية → لازم يرجع يبعث من sendPhoneOtp
         if (now()->gte($record->expires_at)) {
             DB::table('phone_otps')->where('id', $record->id)->delete();
 
             return [
                 'status' => false,
                 'message' => __('auth.otp_expired', ['target' => 'phone number']),
-                'code' => 410, // Gone
+                'code' => 410,
             ];
         }
 
-        // الريسند غير مسموح بعد
         if (now()->lt($record->resend_available_at)) {
 
             $seconds = max(
@@ -183,21 +181,21 @@ class UserAuthService
                     'auth.otp_invalid',
                     ['target' => 'phone number']
                 ),
-                'code' => 400,
+                'code' => 422,
             ];
         }
         if (now()->greaterThan($record->expires_at)) {
             return [
                 'status' => false,
                 'message' => __('auth.otp_expired', ['target' => 'phone number']),
-                'code' => 429,
+                'code' => 410,
             ];
         }
         if ((string)$record->otp !== (string)$otp) {
             return [
                 'status' => false,
                 'message' => __('auth.otp_invalid', ['target' => 'phone number']),
-                'code' => 400
+                'code' => 422
             ];
         }
         DB::table('phone_otps')
