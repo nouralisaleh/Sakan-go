@@ -19,6 +19,8 @@ return [
     'Upgrade_request'=>'Upgrade request submitted successfully',
     'already_rejected'=>'you already reject the user request',
 
+    'phone_not_verified'=>'the number phone not verified ',
+
 
     'otp_sent' => 'OTP sent successfully to your :target.',
     'otp_invalid' => 'Invalid OTP for the provided :target.',
