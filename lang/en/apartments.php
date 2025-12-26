@@ -77,5 +77,7 @@ return [
     'searching_failed'=>'there is nothing in the search',
     'description_empty'=> 'no description',
     'no_contant'=>'nothing to show',
-    'only_owner_allowed'=>'do not have the permission,only the apartment owner'
+    'only_owner_allowed'=>'do not have the permission,only the apartment owner',
+    'not_found'=>'No such apartment',
+    
 ];

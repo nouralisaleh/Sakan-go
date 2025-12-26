@@ -27,13 +27,13 @@ class UserSeeder extends Seeder
             'status'=>'approved'
 
         ]);
-        //      User::create([
-        //     'country_code'=>'+963',
-        //     'phone_number'=>'0960657740',
-        //     'role'=>'tenant',
-        //     'status'=>'approved'
+             User::create([
+            'country_code'=>'+963',
+            'phone_number'=>'0959643053',
+            'role'=>'tenant',
+            'status'=>'approved'
 
-        // ]);
+        ]);
     }
 
 }

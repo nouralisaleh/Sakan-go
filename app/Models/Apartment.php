@@ -16,4 +16,12 @@ class Apartment extends Model
     {
         return $this->hasMany(ApartmentImage::class);
     }
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

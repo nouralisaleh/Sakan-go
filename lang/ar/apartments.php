@@ -83,6 +83,7 @@ return [
     'searching_failed'=>'لا يوجد شي في البحث',
     'description_empty'=>'لا يوجد وصف',
     'no_contant'=>'لا يوجد شي للعرض',
-    'only_owner_allowed'=>'ليس لديك صلاحية ,فقط مالك الشقة'
+    'only_owner_allowed'=>'ليس لديك صلاحية ,فقط مالك الشقة',
+    'not_found'=>'الشقة غير موجودة',
 
 ];

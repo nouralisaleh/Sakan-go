@@ -9,7 +9,9 @@ use  App\Http\Controllers\Auth\UserAuthController;
 use  App\Http\Controllers\File\FileController;
 use App\Http\Controllers\user\UserController;
 use App\Http\Controllers\Apartment\ApartmentController;
-use App\App\Http\Middleware;
+use App\Http\Controllers\Booking\BookingController;
+use App\Http\Controllers\Booking\BookingController as BookingBookingController;
+use App\Http\Controllers\Booking\BookingController as ControllersBookingBookingController;
 
 // /////////////////////////////Admin Routes/////////////////////////////////////////////////////
 
@@ -94,4 +96,12 @@ Route::prefix('apartment')->
         Route::get('/showLatestApartments',[ApartmentController::class,'showLatest']);
 
    });
+   Route::prefix('booking')->middleware(['auth:user_api'])->group(function () {
+          Route::post('/bookAnApartment/{apartment}',[BookingController::class,'store']);
+          Route::get('/rejectAbook/{booking}',[BookingController::class,'reject']);
+          Route::get('/cancelAbook/{booking}',[BookingController::class,'cancel']);
+          Route::get('/showUserBookings',[BookingController::class,'showUserBookings']);
+
+
+});
    
