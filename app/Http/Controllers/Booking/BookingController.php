@@ -5,65 +5,71 @@ use App\Models\Apartment;
 use App\Models\Booking;
 use App\Service\Booking\BookingService;
 use App\Http\Requests\Booking\StoreBookingRequest;
+use App\Http\Resources\BookingResource;
 use App\Service\Booking\OwnerConsentService;
 
 class BookingController extends Controller
 {
     public function store( $apartment,StoreBookingRequest $request,BookingService $bookingService) {
-      
-        $booking = $bookingService->store(
-            auth('user_api')->id(),
-            $apartment,
-            $request->validated()
-        );
-  
+        
+            $booking = $bookingService->store(
+                auth('user_api')->id(),
+                $apartment,
+                $request->validated()
+            );
+    
 
-        return response()->json([
-            'status'  => true,
-            'message' => __('booking.pending'),
-            'data'    => $booking,
-        ], 201);
+            return response()->json([
+                'status'  => true,
+                'message' => __('booking.pending'),
+                'data'    => new BookingResource($booking),
+            ], 201);
+        }
+    public function reject($bookingId, OwnerConsentService $bookingService)
+    {
+            $booking = $bookingService->reject($bookingId);
+
+            return response()->json([
+                'status' => true,
+                'message'=> __('booking.rejected'),
+                //'data' =>new BookingResource($booking),
+            ], 200);
+
+
     }
-public function reject($bookingId, OwnerConsentService $bookingService)
-{
-        $booking = $bookingService->reject($bookingId);
+    public function cancel($bookingId, BookingService $bookingService)
+    {
+    
+            $booking = $bookingService->cancel($bookingId);
 
+            return response()->json([
+                'status' => true,
+                'message'=> __('booking.cancel_ok'),
+                //'data' =>new BookingResource($booking),
+            ], 200);
+
+    }public function showUserBookings(BookingService $bookingService)
+    {
+    $bookings=$bookingService->showUserBookings();
+    if(!$bookings)
+    {
         return response()->json([
-            'status' => true,
-            'message'=> __('booking.rejected'),
-            'data' => $booking,
-        ], 200);
+            'status'=> false,
+            'message'=>'No booking '
+        ]);
 
-
-}
-
-public function cancel($bookingId, BookingService $bookingService)
-{
-   
-        $booking = $bookingService->cancel($bookingId);
-
-        return response()->json([
-            'status' => true,
-            'message'=> __('booking.cancel_ok'),
-            'data' => $booking,
-        ], 200);
-
-}public function showUserBookings(BookingService $bookingService)
-{
-  $bookings=$bookingService->showUserBookings();
-  if(!$bookings)
-  {
+    }
     return response()->json([
-        'status'=> false,
-        'message'=>'No booking '
+        'status'=> true,
+        'data'=>bookingResource::collection($bookings),
     ]);
 
-  }
-  return response()->json([
-    'status'=> true,
-    'data'=>$bookings
-  ]);
-}
+    }
+    public function ownerRequests()
+    {
+        
+
+    }
 
 
 }

@@ -87,20 +87,25 @@ Route::get('/files/{type}/{user}', [FileController::class, 'show'])
 Route::prefix('apartment')->
    middleware(['auth:user_api',EnsureUser::class])->group(function () {
 
-        Route::get('/showApartments',[ApartmentController::class,'show']);
-        Route::post('/insertApartment',[ApartmentController::class,'store']);
-        Route::delete('/deleteApartment/{apartment}',[ApartmentController::class,'delete']);
-        Route::post('/updateApartment/{apartment}',[ApartmentController::class,'update']);
-        Route::post('/apartmentFiltering',[ApartmentController::class,'filter']);
-        Route::get('/showApartmentOwner/{apartment}',[ApartmentController::class,'apartmentOwner']);
-        Route::get('/showLatestApartments',[ApartmentController::class,'showLatest']);
+        Route::post('insertApartment',[ApartmentController::class,'store']);
+        Route::delete('deleteApartment/{apartment}',[ApartmentController::class,'delete']);
+        Route::post('updateApartment/{apartment}',[ApartmentController::class,'update']);
+
 
    });
+   Route::prefix('apartment')-> middleware(['auth:user_api'])->group(function () {
+        Route::get('showApartments',[ApartmentController::class,'show']);
+        Route::post('apartmentFiltering',[ApartmentController::class,'filter']);
+        Route::get('showApartmentOwner/{apartment}',[ApartmentController::class,'apartmentOwner']);
+        Route::get('showLatestApartments',[ApartmentController::class,'showLatest']);
+
+   });
+
    Route::prefix('booking')->middleware(['auth:user_api'])->group(function () {
-          Route::post('/bookAnApartment/{apartment}',[BookingController::class,'store']);
-          Route::get('/rejectAbook/{booking}',[BookingController::class,'reject']);
-          Route::get('/cancelAbook/{booking}',[BookingController::class,'cancel']);
-          Route::get('/showUserBookings',[BookingController::class,'showUserBookings']);
+          Route::post('bookAnApartment/{apartment}',[BookingController::class,'store']);
+          Route::get('rejectAbook/{booking}',[BookingController::class,'reject']);
+          Route::get('cancelAbook/{booking}',[BookingController::class,'cancel']);
+          Route::get('showUserBookings',[BookingController::class,'showUserBookings']);
 
 
 });
