@@ -8,18 +8,9 @@ use App\Models\OwnerRequest;
 
 class OwnerUpgradeService
 {
-
     public function approveUpgradeRequest(int $requestId): array
     {
-        $request = OwnerRequest::with('user')->findOrFail($requestId);
-
-        if ($request->request_status === 'rejected') {
-            return [
-                'status' => false,
-                'message' => __('auth.already_rejected'),
-                'code' => 404,
-            ];
-        }
+        $request = OwnerRequest::findOrFail($requestId);
 
         $request->update([
             'request_status' => 'approved',
@@ -33,23 +24,31 @@ class OwnerUpgradeService
         return [
             'status' => true,
             'message' => __('auth.approved_request'),
+            'data' => [
+                'user_request_status' => 'approved',
+            ],
             'code' => 200
         ];
     }
-    public function rejectUpgradeRequest(int $requestId, string $reason): array
+    public function rejectUpgradeRequest(array $data): array
     {
-        $request = OwnerRequest::findOrFail($requestId);
+        $request = OwnerRequest::findOrFail($data['request_id']);
 
         $request->update([
             'request_status' => 'rejected',
-            'request_rejected_reason' => $reason,
+            'request_rejected_reason' => $data['request_rejected_reason'],
         ]);
 
         return [
             'status' => true,
             'message' => __('auth.rejected_request'),
+            'data' => [
+                'user_request_status' => 'rejected',
+                'request_rejected_reason' => $request->request_rejected_reason,
+            ],
             'code' => 200
         ];
     }
-    
+
+
 }
