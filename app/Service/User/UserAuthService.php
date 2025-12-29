@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\UserProfile;
 use App\Models\User;
+use Illuminate\Support\Str;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,41 +26,62 @@ class UserAuthService
             ->where('country_code', $country_code)
             ->first();
 
-        if ($existingOtp && now()->lt($existingOtp->expires_at)) {
+        // إذا في OTP موجود
+        if ($existingOtp) {
 
-            $seconds = max(
-                0,
-                now()->diffInSeconds($existingOtp->resend_available_at, false)
-            );
+            // إذا لسه وقت إعادة الإرسال ما خلص
+            if (now()->lt($existingOtp->resend_available_at)) {
+
+                $seconds = now()->diffInSeconds($existingOtp->resend_available_at);
+
+                return [
+                    'status' => false,
+                    'message' => __('auth.otp_already_sent', ['target' => 'phone number']),
+                    'data' => [
+                        'resend_after_seconds' => $seconds,
+                    ],
+                    'code' => 429,
+                ];
+            }
+
+            // إذا وقت الإعادة خلص → نحدّث الكود
+            $otp = rand(100000, 999999);
+
+            DB::table('phone_otps')
+                ->where('id', $existingOtp->id)
+                ->update([
+                    'otp' => $otp,
+                    'is_verified' => false,
+                    'is_used' => false,
+                    'expires_at' => now()->addMinutes($this->otpExpiresMinutes),
+                    'resend_available_at' => now()->addSeconds(60),
+                    'updated_at' => now(),
+                ]);
+
+            $this->sendOtpMessage($country_code . $phone, $otp);
 
             return [
-                'status' => false,
-                'message' => __('auth.otp_already_sent', ['target' => 'phone number']),
+                'status' => true,
+                'message' => __('auth.otp_sent', ['target' => 'phone number']),
                 'data' => [
-                    'resend_available_at' => $existingOtp->resend_available_at,
-                    'resend_after_seconds' => $seconds,
+                    'expires_in' => $this->otpExpiresMinutes * 60,
+                    'resend_available_at' => now()->addSeconds(60)->toIso8601String(),
                 ],
-                'code' => 429,
+                'code' => 200,
             ];
         }
 
-        if ($existingOtp && now()->gte($existingOtp->expires_at)) {
-            DB::table('phone_otps')->where('id', $existingOtp->id)->delete();
-        }
-
+        // أول مرة – لا يوجد OTP سابق
         $otp = rand(100000, 999999);
-
-        $expiresAt = now()->addMinutes($this->otpExpiresMinutes);
-        $resendAvailableAt = now()->addSeconds(60);
 
         DB::table('phone_otps')->insert([
             'phone_number' => $phone,
             'country_code' => $country_code,
             'otp' => $otp,
             'is_verified' => false,
-            'is_used' => true,
-            'expires_at' => $expiresAt,
-            'resend_available_at' => $resendAvailableAt,
+            'is_used' => false,
+            'expires_at' => now()->addMinutes($this->otpExpiresMinutes),
+            'resend_available_at' => now()->addSeconds(60),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -71,7 +93,7 @@ class UserAuthService
             'message' => __('auth.otp_sent', ['target' => 'phone number']),
             'data' => [
                 'expires_in' => $this->otpExpiresMinutes * 60,
-                'resend_available_at' => $resendAvailableAt->toIso8601String(),
+                'resend_available_at' => now()->addSeconds(60)->toIso8601String(),
             ],
             'code' => 200,
         ];
@@ -118,7 +140,6 @@ class UserAuthService
             ];
         }
 
-        // إعادة إرسال OTP
         $otp = rand(100000, 999999);
 
         $expiresAt = now()->addMinutes($this->otpExpiresMinutes);
@@ -147,7 +168,7 @@ class UserAuthService
     }
     private function sendOtpMessage(string $to, int $otp): void
     {
-        $body = "Your verification code is: {$otp}.";
+        $body = __('auth.message_body', ['otp' => $otp]);
 
         $instance = env('ULTRAMSG_INSTANCE_ID');
         $token = env('ULTRAMSG_TOKEN');
@@ -173,7 +194,6 @@ class UserAuthService
             ->where('country_code', $country_code)
             ->first();
 
-
         if (!$record) {
             return [
                 'status' => false,
@@ -198,6 +218,16 @@ class UserAuthService
                 'code' => 422
             ];
         }
+        $token = Str::uuid()->toString();
+
+        DB::table('otp_sessions')->insert([
+            'token' => $token,
+            'phone_number' => $phone,
+            'country_code' => $country_code,
+            'expires_at' => now()->addMinutes(15),
+            'created_at' => now(),
+        ]);
+
         DB::table('phone_otps')
             ->where('id', $record->id)
             ->update(
@@ -214,26 +244,14 @@ class UserAuthService
                     'message' => __('auth.logged_in'),
                     'data' => [
                         'token' => JWTAuth::fromUser($user),
-                        'token_type' => 'bearer'
+                        'token_type' => 'bearer',
+                        'user_role' => $user->role,
                     ],
                     'code' => 200,
                 ];
             }
-            if ($user->status === 'pending') {
-                return [
-                    'status' => false,
-                    'message' => __('auth.pending'),
-                    'code' => 403,
-                ];
-            }
-            if ($user->status === 'rejected') {
-                return [
-                    'status' => false,
-                    'message' => __('auth.rejected'),
-                    'code' => 403,
-                ];
-            }
         }
+
         return [
             'status' => true,
             'message' => __('auth.profile_does_not_exist'),
@@ -242,77 +260,85 @@ class UserAuthService
                 'country_code' => $country_code,
                 'is_phone_verified' => true,
                 'verified_at' => now()->toIso8601String(),
+                'cookie' => $token,
             ],
             'code' => 200
         ];
     }
-    public function submitProfile(array $data): array
+    public function submitProfile(array $data, string $otpToken): array
     {
-        $otp = DB::table('phone_otps')
-            ->where('phone_number', $data['phone_number'])
-            ->where('country_code', $data['country_code'])
-            ->where('is_verified', true)
-            ->where('updated_at', '>=', now()
-                ->subMinutes(15))
+        $session = DB::table('otp_sessions')
+            ->where('token', $otpToken)
+            ->where('expires_at', '>', now())
             ->first();
-        if (!$otp) {
+
+        if (!$session) {
             return [
-                'status' => false,
-                'message' => __('auth.phone_not_verified'),
+                'message' => 'OTP session invalid',
                 'code' => 401
             ];
         }
+
         $user = User::updateOrCreate(
-            ['phone_number' => $data['phone_number']],
+            ['phone_number' => $session->phone_number],
             [
-                'country_code' => $data['country_code'],
+                'country_code' => $session->country_code,
                 'status' => 'pending',
                 'role' => 'tenant',
                 'phone_verified_at' => now(),
             ]
         );
+
+        $profileData = [
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'birth_date' => $data['birth_date'],
+            'is_completed' => true,
+            'completed_at' => now(),
+        ];
+
+        if (isset($data['personal_image'])) {
+            $profileData['personal_image'] = $data['personal_image']->store(
+                'personal_images/' . $user->id,
+                'private'
+            );
+        }
+
+        if (isset($data['id_image'])) {
+            $profileData['id_image'] = $data['id_image']->store(
+                'id_images/' . $user->id,
+                'private'
+            );
+        }
+
         UserProfile::updateOrCreate(
             ['user_id' => $user->id],
-            [
-                'first_name' => $data['first_name'],
-                'last_name' => $data['last_name'],
-                'birth_date' => $data['birth_date'],
-                'personal_image' => $data['personal_image'] ?? null,
-                'id_image' => $data['id_image'] ?? null,
-                'is_completed' => true,
-                'completed_at' => now(),
-            ]
+            $profileData
         );
+
         return [
             'status' => true,
             'message' => __('auth.user_profile_submitted'),
             'code' => 200
         ];
     }
-    public function logout()
+    public function logout(): void
     {
+
         /** @var \Tymon\JWTAuth\JWTGuard $guard */
         $guard = auth('user_api');
         $guard->logout();
-
-        return response()->json([
-            'success' => true,
-            'message' => __('auth.logged_out')
-        ], 200);
     }
-    public function refresh()
+    public function refresh(): array
     {
         /** @var \Tymon\JWTAuth\JWTGuard $guard */
-        $guard = auth('admin_api');
-
-        $newToken = $guard->refresh();
+        $guard = auth('user_api');
+        $token = $guard->refresh();
 
         return [
-            "success" => true,
-            "message" => __('auth.refreshed'),
-            'token' => $newToken,
+            'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => $guard->factory()->getTTL() * 60,
+            'expires_in' => $guard->getTTL() * 60,
         ];
     }
     public function profile(): array
@@ -333,6 +359,62 @@ class UserAuthService
             'code' => 200
         ];
     }
+    public function chackStatus(string $otptoken): array
+    {
+        $session = DB::table('otp_sessions')
+            ->where('token', $otptoken)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if (!$session) {
+            return [
+                'status' => false,
+                'message' => 'Session expired',
+                'code' => 401,
+            ];
+        }
+        $user = User::where('phone_number', $session->phone_number)->first();
+        if ($user->status === 'pending') {
+            return [
+                'status' => 'true',
+                'message' => __('auth.pending'),
+                'data' => [
+                    'user_status' => 'pending',
+                    'rejected_reason' => null,
+                    'token' => null
+                ],
+                'code' => 403,
+            ];
+        }
+        if ($user->status === 'rejected') {
+            return [
+                'status' => 'true',
+                'message' => __('auth.rejected'),
+                'data' => [
+                    'user_status' => 'rejected',
+                    'rejected_reason' => $user->rejected_reason,
+                    'token' => null
+                ],
+                'code' => 403,
+            ];
+        }
+        DB::table('otp_sessions')->where('id', $session->id)->delete();
+
+        /** @var \Tymon\JWTAuth\JWTGuard $guard */
+        $guard = auth('user_api');
+        $token = $guard->login($user);
+
+        return [
+            'status' => 'true',
+            'meesage' => __('auth.approved'),
+            'data' => [
+                'user_status' => 'approved',
+                'rejected_reason' => null,
+                'token' => $token,
+            ],
+            'code' => 200
+        ];
+    }
     public function updateUserProfile(User $user, array $data): User
     {
         $updates = [];
@@ -342,8 +424,6 @@ class UserAuthService
                 'first_name',
                 'last_name',
                 'birth_date',
-                'phone_number',
-                'country_code'
             ] as $field
         ) {
             if (isset($data[$field])) {
@@ -383,5 +463,17 @@ class UserAuthService
         }
 
         return $user->load('profile');
+    }
+    public function restoreUser(int $userId): array
+    {
+        $user = User::withTrashed()->findOrFail($userId);
+
+        $user->restore();
+
+        return [
+            'status' => true,
+            'message' => 'User restored successfully',
+            'code' => 200
+        ];
     }
 }
