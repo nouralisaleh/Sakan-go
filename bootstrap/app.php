@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\SetApplang;
+use App\Http\Middleware\OtpSessionMiddleware;
 
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -15,7 +16,19 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(SetApplang::class);
+         $middleware->alias([
+            'otp.session' => OtpSessionMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (
+        \Illuminate\Auth\AuthenticationException $e,
+        $request
+    ) {
+        return response()->json([
+            'message' => 'Unauthenticated.',
+            'code' => 401
+        ]);
+    });
+
     })->create();

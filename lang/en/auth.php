@@ -2,9 +2,12 @@
 
 return [
 
+    'otp_resend_not_allowed' => 'You cannot resend the OTP right now. Please try again after the specified time.',
+    'unable_send_otp' => 'Unable to send OTP via :target. Please check your connection or configuration.',
+    'user_profile_submitted' => 'User profile submitted successfully and is pending approval.',
+    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
     'failed' => 'These credentials do not match our records.',
     'password' => 'The provided password is incorrect.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
     'invalid_credentials' => 'Email or password is incorrect.',
     'logged_out' => 'Logged out successfully.',
     'logged_in' => 'Logged in successfully.',
@@ -13,14 +16,13 @@ return [
     'rejected' => 'User has been rejected.',
     'pending' => 'User is pending approval.',
     'refreshed' => 'user refreshd successfuly',
+    'deleted' => 'User has been deleted',
     'pending_request' => 'You already have a pending request.',
     'approved_request' => 'Your request is approved.',
     'rejected_request' => 'Your request is rejected.',
-    'Upgrade_request'=>'Upgrade request submitted successfully',
-    'already_rejected'=>'you already reject the user request',
-
-    'phone_not_verified'=>'the number phone not verified ',
-
+    'Upgrade_request' => 'Upgrade request submitted successfully',
+    'already_rejected' => 'you already reject the user request',
+    'phone_not_verified' => 'the number phone not verified ',
 
     'otp_sent' => 'OTP sent successfully to your :target.',
     'otp_invalid' => 'Invalid OTP for the provided :target.',
@@ -28,17 +30,15 @@ return [
     'otp_verified' => 'OTP for your :target was verified successfully.',
     'otp_not_verified' => 'OTP for your :target was not  verified .',
     'profile_does_not_exist' => 'user profile does not exist',
-
+    'existing_pending_request'=>'You have an existing pending request.',
     'otp_not_found' => 'No OTP request found for this :target.',
     'otp_failed' => 'Failed to send OTP via :target.',
     'otp_resent' => 'otp has be resent to :target',
     'otp_already_sent' => 'the otp already sent to :target.',
-    'unable_send_otp' => 'Unable to send OTP via :target. Please check your connection or configuration.',
-    'otp_resend_not_allowed' => 'You cannot resend the OTP right now. Please try again after the specified time.',
-
+    'already_owner'=>'you are already owner',
     'password_reset_success' => 'Password reset successfully.',
     'email_not_found' => 'Email does not exist.',
     'failed_profile' => 'Unauthorized or token expired',
-    'user_profile_submitted' => 'User profile submitted successfully and is pending approval.',
+    'message_body' => 'Your verification code is: :otp.',
 
 ];
