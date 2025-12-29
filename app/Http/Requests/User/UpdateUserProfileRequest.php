@@ -20,13 +20,6 @@ class UpdateUserProfileRequest extends FormRequest
 
             'birth_date' => 'sometimes|date',
 
-            'phone_number' => [
-                'sometimes',
-                'numeric',
-                Rule::unique('users', 'phone_number')->ignore($this->user()->id),
-            ],
-            'country_code'  => 'sometimes|string|min:2|max:4|starts_with:+',
-
             'personal_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
             'id_image'       => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:4096',
         ];
@@ -34,8 +27,6 @@ class UpdateUserProfileRequest extends FormRequest
     public function messages()
     {
         return [
-            'phone_number.numeric' => __('validation.numeric', ['attribute' => 'phone number']),
-            'phone_number.unique' => __('validation.unique', ['attribute' => 'phone number']),
             'first_name.string' => __('validation.string', ['attribute' => 'first name']),
             'first_name.max' => __('validation.max.string', ['attribute' => 'first name', 'max' => 20]),
             'last_name.string' => __('validation.string', ['attribute' => 'last name']),
@@ -50,4 +41,6 @@ class UpdateUserProfileRequest extends FormRequest
 
         ];
     }
+
+
 }

@@ -11,8 +11,6 @@ class ResetPasswordRequest extends FormRequest
     {
         return true;
     }
-
-
     public function rules(): array
     {
         return [
@@ -20,7 +18,6 @@ class ResetPasswordRequest extends FormRequest
             'new_password' => 'required|min:8|confirmed'
         ];
     }
-
     public function messages()
     {
         return [
@@ -32,11 +29,11 @@ class ResetPasswordRequest extends FormRequest
             'new_password.confirmed' => __('validation.confirmed', ['attribute' => 'new password']),
         ];
     }
-
     protected function prepareForValidation()
     {
         $this->merge([
             'email' => strtolower(trim($this->email)),
         ]);
     }
+    
 }

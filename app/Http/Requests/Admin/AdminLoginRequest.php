@@ -11,7 +11,6 @@ class AdminLoginRequest extends FormRequest
     {
         return true;
     }
-
     public function rules(): array
     {
         return [
@@ -31,11 +30,11 @@ class AdminLoginRequest extends FormRequest
             'password.min' => __('validation.min.string', ['attribute' => 'password', 'min' => 8]),
         ];
     }
-
     protected function prepareForValidation()
     {
         $this->merge([
             'email' => strtolower(trim($this->email)),
         ]);
     }
+    
 }
