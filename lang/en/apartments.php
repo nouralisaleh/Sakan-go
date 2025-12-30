@@ -79,5 +79,6 @@ return [
     'no_contant'=>'nothing to show',
     'only_owner_allowed'=>'do not have the permission,only the apartment owner',
     'not_found'=>'No such apartment',
+    'booked'=>'can not update or delete a booked apartment'
     
 ];

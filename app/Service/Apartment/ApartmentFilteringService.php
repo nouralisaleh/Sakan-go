@@ -71,7 +71,7 @@ public function home($user)
         ],
         'favorite apartments:'=>[
             'title'=>'your favorite apartments:',
-            'apartments'=>ApartmentResource::collection($user->favoriteApartments()->with('images')->get())
+            'apartments'=>$user->favoriteApartments()->pluck('apartment_id'),
         ],
 
 

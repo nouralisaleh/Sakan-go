@@ -22,37 +22,31 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->prepend(SetApplang::class);
     })
      ->withExceptions(function (Exceptions $exceptions) {
-$exceptions->render(function (NotFoundHttpException $e) {
-    
-    return response()->json([
-        'status' => false,
-        'message' => __('validation.error'),
-        'code' => 404,
-    ], 404);
-});
-$exceptions->render(function (ModelNotFoundException $e) {
-    $model = class_basename($e->getModel());
 
-    return response()->json([
-        'status' => false,
-        'message' => match ($model) {
-            'Apartment' => __('apartments.not_found'),
-            'Booking'   => __('booking.not_found'),
-            default     => __('errors.not_found'),
-        },
-        'code' => 404,
-    ], 404);
-});
+            $exceptions->render(function (ModelNotFoundException $e) {
+                $model = class_basename($e->getModel());
 
-        $exceptions->render(function (\DomainException $e) {
-            return response()->json([
-                'status' => false,
-                'message' => match ($e->getMessage()) {
-                    'BOOKING_CONFLICT'             => __('booking.conflict'),
-                    'BOOKING_ALREADY_FINALIZED'   => __('booking.can_not_reject_or_cancel'),
-                    default                        => __('errors.logic'),
-                }
-            ], 422);
-});
+                return response()->json([
+                    'status' => false,
+                    'message' => match ($model) {
+                        'Apartment' => __('apartments.not_found'),
+                        'Booking'   => __('booking.not_found'),
+                        default     => __('errors.not_found'),
+                    },
+                    'code' => 404,
+                ], 404);
+            });
 
-    })->create();
+                    $exceptions->render(function (\DomainException $e) {
+                        return response()->json([
+                            'status' => false,
+                            'message' => match ($e->getMessage()) {
+                                'APARTMENT_HAS_ACTIVE_BOOKINGS'=>__('apartments.booked'),
+                                'BOOKING_CONFLICT'             => __('booking.conflict'),
+                                'BOOKING_ALREADY_FINALIZED'   => __('booking.can_not_reject_or_cancel'),
+                                default                        => __('errors.logic'),
+                            }
+                        ], 422);
+                    });
+
+                })->create();

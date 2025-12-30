@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Apartment;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Apartment;
 use Illuminate\Auth\Access\AuthorizationException;
 
 
@@ -15,9 +16,8 @@ class UpdateApartmentRequest extends FormRequest
      */
      public function authorize(): bool
     {
-    $apartment = $this->route('apartment');
     
-    return $apartment->user_id === auth('user_api')->id();
+    return auth('user_api')->check();
     }
 
     public function rules(): array

@@ -9,10 +9,8 @@ use  App\Http\Controllers\Auth\UserAuthController;
 use  App\Http\Controllers\File\FileController;
 use App\Http\Controllers\user\UserController;
 use App\Http\Controllers\Apartment\ApartmentController;
-use App\Http\Controllers\Booking\BookingController;
-use App\Http\Controllers\Booking\BookingController as BookingBookingController;
-use App\Http\Controllers\Booking\BookingController as ControllersBookingBookingController;
 use App\Http\Controllers\Favorite\FavoriteController;
+use App\Http\Controllers\Booking\BookingController;
 
 // /////////////////////////////Admin Routes/////////////////////////////////////////////////////
 
@@ -84,27 +82,28 @@ Route::middleware(['throttle:5,1'])->group(function () {
 
 Route::get('/files/{type}/{user}', [FileController::class, 'show'])
     ->where('type', 'personal|id');
-    
-Route::prefix('apartment')->
-   middleware(['auth:user_api',EnsureUser::class])->group(function () {
-
-        Route::post('insertApartment',[ApartmentController::class,'store']);
-        Route::delete('deleteApartment/{apartment}',[ApartmentController::class,'delete']);
-        Route::post('updateApartment/{apartment}',[ApartmentController::class,'update']);
-
-
-   });
+  
    Route::prefix('apartment')-> middleware(['auth:user_api'])->group(function () {
     
         Route::get('showApartments',[ApartmentController::class,'show']);
         Route::post('apartmentFiltering',[ApartmentController::class,'filter']);
-        Route::get('showApartmentOwner/{apartment}',[ApartmentController::class,'apartmentOwner']);
-        Route::get('showLatestApartments',[ApartmentController::class,'showLatest']);
-        Route::get('homePage',[ApartmentController::class,'home']);
         Route::get('favoriteUserApartments',[FavoriteController::class,'favoriteList']);
+        Route::get('showLatestApartments',[ApartmentController::class,'showLatest']);
+
+        Route::get('showApartmentOwner/{apartment}',[ApartmentController::class,'apartmentOwner']);
+        Route::get('homePage',[ApartmentController::class,'home']);
         Route::get('addToFavorite/{apartment}',[FavoriteController::class,'toggel']);
 
+   });    
+Route::prefix('apartment')->
+   middleware(['auth:user_api',EnsureUser::class])->group(function () {
+        Route::post('/updateApartment/{apartment}',[ApartmentController::class,'update']);
+        Route::delete('deleteApartment/{apartment}',[ApartmentController::class,'delete']);
+        Route::post('/insertApartment',[ApartmentController::class,'store']);
+
+        
    });
+
 
    Route::prefix('booking')->middleware(['auth:user_api'])->group(function () {
 

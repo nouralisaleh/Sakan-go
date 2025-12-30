@@ -40,9 +40,20 @@ class ApartmentService
     });
 }
 
-  public function update( Apartment $apartment, array $data, array $images = []): Apartment
+  public function update(int  $apartment_id, array $data, array $images = [])
     { 
-        //if($apartment->bookings()){
+
+         $apartment=Apartment::where('id',$apartment_id)->first();
+        if(!$apartment)
+        {
+           throw new ModelNotFoundException('APARTMENT_NOT_FOUND');
+        } 
+
+        if ($apartment->user_id !== auth('user_api')->id())
+        {
+           throw new \DomainException('NOT_APARTMENT_OWNER');
+        }
+        $this->ensureNotBooked($apartment);
 
         return DB::transaction(function () use ($apartment, $data, $images) {
             $apartment->update($data);
@@ -62,7 +73,9 @@ class ApartmentService
        if( !$apartment )
         {
            throw new ModelNotFoundException('APARTMENT_NOT_FOUND');
-        }        
+        } 
+        $this->ensureNotBooked($apartment);
+ 
         return DB::transaction(function () use ($apartment) {
             $this->imageService->deleteApartmentImages($apartment);
             return $apartment->delete();
@@ -82,6 +95,16 @@ class ApartmentService
     // {
 
     // }
+    private function ensureNotBooked(Apartment $apartment): void
+{
+    $hasActiveBookings = $apartment->bookings()
+        ->whereIn('status', ['pending', 'confirmed'])
+        ->exists();
+
+    if ($hasActiveBookings) {
+        throw new \DomainException('APARTMENT_HAS_ACTIVE_BOOKINGS');
+    }
+}
 
   
     

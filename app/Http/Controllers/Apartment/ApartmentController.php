@@ -15,7 +15,6 @@ use App\Models\Apartment;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use App\Service\Apartment\ApartmentFilteringService;
-use App\Service\Apartment\ApartmentFilteringService as ApartmentApartmentFilteringService;
 use App\Service\Apartment\ApartmentService;
 use App\Http\Resources\ApartmentListResource;
 use Exception;
@@ -53,15 +52,11 @@ public function store(StoreApartmentRequest $request, ApartmentService $service)
 }
 
 
-    public function update(Apartment $apartment,UpdateApartmentRequest $request,ApartmentService $apartmentService)
+    public function update(int $apartment,UpdateApartmentRequest $request,ApartmentService $apartmentService)
     {
      $validated =$request->safe()->except('images');
      $images = $request->file('images',[]);
 
-     if( !$apartment )
-        {
-           throw new ModelNotFoundException('APARTMENT_NOT_FOUND');
-        }
      $updatedapartment=$apartmentService->update($apartment,$validated,$images);
      return response()->json([
         'status'=>true,
