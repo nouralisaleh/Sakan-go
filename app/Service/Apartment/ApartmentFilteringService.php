@@ -69,9 +69,8 @@ public function home($user)
             'title'=>'furnished apartments:',
             'apartments:'=>$this->filter(['is_furnished'=> true])
         ],
-        'favorite apartments:'=>[
-            'title'=>'your favorite apartments:',
-            'apartments'=>$user->favoriteApartments()->pluck('apartment_id'),
+        'favorite apartments id:'=>[
+           $user->favoriteApartments()->pluck('apartment_id'),
         ],
 
 
