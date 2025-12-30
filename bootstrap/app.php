@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\SetApplang;
 use App\Http\Middleware\OtpSessionMiddleware;
+use Illuminate\Validation\ValidationException;
 
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -29,6 +30,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'message' => 'Unauthenticated.',
             'code' => 401
         ]);
+    });
+      // 422 - Validation Error
+    $exceptions->render(function (ValidationException $e, $request) {
+        return response()->json([
+            'message' => $e->getMessage(),
+            'errors'  => $e->errors(),
+            'code'    => 422
+        ], 422);
     });
 
     })->create();
