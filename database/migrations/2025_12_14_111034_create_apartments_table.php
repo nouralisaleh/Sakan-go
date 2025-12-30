@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('is_furnished')->default(false);
             $table->unsignedInteger('floor_number');
             $table->unsignedInteger('size');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
 
         });

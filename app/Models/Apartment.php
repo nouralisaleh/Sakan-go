@@ -24,4 +24,13 @@ class Apartment extends Model
     {
         return $this->hasMany(Review::class);
     }
+    public  function favoriteByUsers()
+    {
+        return $this->belongsToMany(User::class,'favorites');
+    }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+  
 }

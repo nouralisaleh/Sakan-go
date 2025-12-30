@@ -12,6 +12,7 @@ use App\Http\Controllers\Apartment\ApartmentController;
 use App\Http\Controllers\Booking\BookingController;
 use App\Http\Controllers\Booking\BookingController as BookingBookingController;
 use App\Http\Controllers\Booking\BookingController as ControllersBookingBookingController;
+use App\Http\Controllers\Favorite\FavoriteController;
 
 // /////////////////////////////Admin Routes/////////////////////////////////////////////////////
 
@@ -94,14 +95,19 @@ Route::prefix('apartment')->
 
    });
    Route::prefix('apartment')-> middleware(['auth:user_api'])->group(function () {
+    
         Route::get('showApartments',[ApartmentController::class,'show']);
         Route::post('apartmentFiltering',[ApartmentController::class,'filter']);
         Route::get('showApartmentOwner/{apartment}',[ApartmentController::class,'apartmentOwner']);
         Route::get('showLatestApartments',[ApartmentController::class,'showLatest']);
+        Route::get('homePage',[ApartmentController::class,'home']);
+        Route::get('favoriteUserApartments',[FavoriteController::class,'favoriteList']);
+        Route::get('addToFavorite/{apartment}',[FavoriteController::class,'toggel']);
 
    });
 
    Route::prefix('booking')->middleware(['auth:user_api'])->group(function () {
+
           Route::post('bookAnApartment/{apartment}',[BookingController::class,'store']);
           Route::get('rejectAbook/{booking}',[BookingController::class,'reject']);
           Route::get('cancelAbook/{booking}',[BookingController::class,'cancel']);

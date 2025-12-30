@@ -24,7 +24,9 @@ class ApartmentSeeder extends Seeder
             'floor_number'=>3,
             'is_furnished'=>true,
             'size'=>100,
-           'user_id' =>  6,
+           'user_id' =>  1,
+        ])->images()->create([
+            'path'=>'apartments/6/UivhVgexduFzBKngQAvgKi9azg8axYpKPqIpqO7p.jpg'
         ]);
 
         // شقق Omar
@@ -39,7 +41,40 @@ class ApartmentSeeder extends Seeder
             'floor_number'=>3,
             'is_furnished'=>true,
             'size'=> 120,
-            'user_id' => 6,
+            'user_id' => 1,
+        ])->images()->create([
+            'path'=>'apartments/6/UivhVgexduFzBKngQAvgKi9azg8axYpKPqIpqO7p.jpg'
         ]);
+
+        Apartment::create([
+            'title' => 'for honeymoon',
+            'city' => 'damascuse',
+            'governorate' => 'damascuse',
+            'rooms' => 4,
+            'area' => 'Al malki',
+            'price' => 1200000,
+            'floor_number'=>3,
+            'is_furnished'=>true,
+            'size'=> 130,
+            'user_id' => 1,
+        ])->images()->create([
+            'path'=>'apartments/6/UivhVgexduFzBKngQAvgKi9azg8axYpKPqIpqO7p.jpg'
+        ]);
+        Apartment::create([
+            'title' => 'for university life',
+            'description' => 'a quiet area close to transportation',
+            'city' => 'damascuse',
+            'governorate' => 'damascuse',
+            'rooms' => 4,
+            'area' => 'kafersosa',
+            'price' => 800000,
+            'floor_number'=>3,
+            'is_furnished'=>true,
+            'size'=> 120,
+            'user_id' => 1,
+        ])->images()->create([
+            'path'=>'apartments/5/eSvUOYYxRDxtSxxlNeiJ2VT94qGxVezYI6lp1c7m.jpg'
+        ]);
+
     }
 }

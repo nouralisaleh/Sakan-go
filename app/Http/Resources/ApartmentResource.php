@@ -25,7 +25,7 @@ class ApartmentResource extends JsonResource
             'floor_number'  => $this->floor_number,
             'price'         => $this->price,
             'is_furnished'  => (bool) $this->is_furnished,
-            'size'          => $this->size ,
+            'size'          => $this->size,
 
             'images' => $this->whenLoaded('images', function () {
                 return $this->images->map(fn ($img) => asset('storage/' . $img->path));
@@ -41,4 +41,5 @@ class ApartmentResource extends JsonResource
 
         ];
     }
+
 }

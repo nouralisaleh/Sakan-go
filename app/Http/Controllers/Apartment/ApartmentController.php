@@ -12,9 +12,12 @@ use App\Http\Requests\Apartment\UpdateApartmentRequest;
 use App\Http\Requests\Apartment\DeleteApartmentRequest;
 use App\Http\Resources\ApartmentResource;
 use App\Models\Apartment;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 use App\Service\Apartment\ApartmentFilteringService;
 use App\Service\Apartment\ApartmentFilteringService as ApartmentApartmentFilteringService;
 use App\Service\Apartment\ApartmentService;
+use App\Http\Resources\ApartmentListResource;
 use Exception;
 
 
@@ -25,7 +28,7 @@ class ApartmentController extends Controller
      $apartments=$apartmentService->show();
       return response()->json([
         'status' => true,
-        'data'=> ApartmentResource::collection($apartments),
+        'data'=> apartmentListResource::collection($apartments),
     
     ]);
      
@@ -55,27 +58,26 @@ public function store(StoreApartmentRequest $request, ApartmentService $service)
      $validated =$request->safe()->except('images');
      $images = $request->file('images',[]);
 
+     if( !$apartment )
+        {
+           throw new ModelNotFoundException('APARTMENT_NOT_FOUND');
+        }
      $updatedapartment=$apartmentService->update($apartment,$validated,$images);
      return response()->json([
         'status'=>true,
         'message'=>__('apartments.updated_successful'),
         'data'=>new ApartmentResource($updatedapartment),
+        'code'=>200
     ],200);
     }
 
     public function delete($apartment,ApartmentService $apartmentService)
     {
-        $apartment=Apartment::find($apartment);
-        if(!$apartment)
-          return response()->json([
-           'status'=>false,
-           'message'=>__('apartments.deletion_failed')
-
-        ]);
         $deletedapartment=$apartmentService->delete($apartment); 
         return response()->json([
             'status'=>true,
             'message'=>__('apartments.deletion_successful'),
+            'code'=>200,
         ],200);
     } 
     
@@ -90,17 +92,17 @@ public function store(StoreApartmentRequest $request, ApartmentService $service)
         ] ,200);
         return response()->json([
             'status'=>true,
-            'data' =>apartmentResource::collection($filter),
+            'data' =>apartmentListResource::collection($filter),
  
     ]);
     
     }
-    public function apartmentOwner(Apartment $apartment,ApartmentService $apartmentService)
+    public function apartmentOwner( $apartment,ApartmentService $apartmentService)
     {
      return response()->json([
        'status'=>true,
        'data'=>$apartmentService->apartmentOwner($apartment),
-     ]);
+     ],200);
     }
     public function showLatest(ApartmentFilteringService $apartmentFilteringService)
     {
@@ -108,8 +110,18 @@ public function store(StoreApartmentRequest $request, ApartmentService $service)
         return response()->json([
             'status'=>true,
             'date'=>apartmentResource::collection($latest),
+            'code'=>200,
+        ],200);
+    }
+    public function home(ApartmentFilteringService $apartmentFilteringService)
+    {
+       return response()->json ([
+            'status'=>true,
+            'data'=>$apartmentFilteringService->home(auth('user_api')->user()),
+            'code'=>200
         ]);
     }
+    
 
 
 

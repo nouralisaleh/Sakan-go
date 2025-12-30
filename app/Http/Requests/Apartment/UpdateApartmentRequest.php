@@ -16,7 +16,7 @@ class UpdateApartmentRequest extends FormRequest
      public function authorize(): bool
     {
     $apartment = $this->route('apartment');
-
+    
     return $apartment->user_id === auth('user_api')->id();
     }
 

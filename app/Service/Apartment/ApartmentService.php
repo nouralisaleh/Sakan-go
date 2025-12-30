@@ -5,8 +5,11 @@ namespace App\Service\Apartment;
 use App\Http\Requests\UpdateApartmentRequest;
 use App\Models\Apartment;
 use App\Models\ApartmentImage;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 
 
@@ -18,7 +21,7 @@ class ApartmentService
 
     public function show()
     {
-        return Apartment::latest()->get();
+        return Apartment::with('images')->latest()->get();
     }
 
   public function store(array $data, array $images=[], int $userId): Apartment
@@ -37,8 +40,10 @@ class ApartmentService
     });
 }
 
-  public function update(Apartment $apartment, array $data, array $images = []): Apartment
-    {
+  public function update( Apartment $apartment, array $data, array $images = []): Apartment
+    { 
+        //if($apartment->bookings()){
+
         return DB::transaction(function () use ($apartment, $data, $images) {
             $apartment->update($data);
 
@@ -51,18 +56,34 @@ class ApartmentService
         });
     }
 
-   public function delete(Apartment $apartment): bool
+   public function delete( $apartment_id): bool
     {
+       $apartment=Apartment::find($apartment_id);
+       if( !$apartment )
+        {
+           throw new ModelNotFoundException('APARTMENT_NOT_FOUND');
+        }        
         return DB::transaction(function () use ($apartment) {
             $this->imageService->deleteApartmentImages($apartment);
             return $apartment->delete();
         });
     }
 
-    public function apartmentOwner(Apartment $apartment)
+    public function apartmentOwner( $apartment_id)
     {
-        return $apartment->owner;
+       $apartment=Apartment::find($apartment_id);
+       if( !$apartment )
+        {
+           throw new ModelNotFoundException('APARTMENT_NOT_FOUND');
+        }
+        return $apartment->owner->profile();
     }
+    // public function ownerApartments()
+    // {
+
+    // }
+
+  
     
 
 }
