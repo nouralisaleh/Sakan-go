@@ -17,5 +17,6 @@
     'update_ok'=>'booking updated',
     'delete_ok'=>'booking deleted',
     'rejected'=>'owner rejected the booking,contact with the owner to learn more',
+    'not_booked'=>'no booking for approve'
 
  ];

@@ -66,10 +66,31 @@ class BookingController extends Controller
 
     }
     public function ownerRequests()
-    {
-        
+     {  
+    //     $user = auth('user_api')->user();
+    //     if($user->role !== 'owner')
+    //     {
+    //       return response()->json([
+    //         'status'=> false,
+    //         'message'=>'لست مخول للقيام باي شي يخص المالك',
+    //       ]);
+
+    //     }
+    //     $apartments=Apartment::where('user_id', $user->id)->get();
+    //     return response()->json([
+    //         'status'=> true,
+    //         'data'=> $apartments,
+    //     ]);
 
     }
+    public function approve($booking_id,OwnerConsentService $ownerConsentService)
+    {
+        $book= $ownerConsentService->approve($booking_id);
+        return response()->json([
+            'data'=>$book
+        ]);
+    }
+
 
 
 }

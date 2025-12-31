@@ -46,6 +46,10 @@ class BookingService{
             ]);
         });
     }
+    // public function update($booking_id, $data)
+    // {
+      
+    // }
 
     public function cancel($booking_id)
     {
@@ -65,11 +69,21 @@ class BookingService{
 
         return $booking;
     }
+
     public function showUserBookings()
     {
         $bookings=auth('user_api')->user()->bookings;
         return $bookings;
     }
+    public function autoCompleteExpiredBookings(): void
+    {
+        Booking::where('status', 'confirmed')
+            ->where('end_date', '<', now()->toDateString())
+            ->update([
+                'status' =>'completed',
+            ]);
+    }
+
     }
 
 

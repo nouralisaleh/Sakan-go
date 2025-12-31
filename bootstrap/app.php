@@ -44,6 +44,7 @@ return Application::configure(basePath: dirname(__DIR__))
                                 'APARTMENT_HAS_ACTIVE_BOOKINGS'=>__('apartments.booked'),
                                 'BOOKING_CONFLICT'             => __('booking.conflict'),
                                 'BOOKING_ALREADY_FINALIZED'   => __('booking.can_not_reject_or_cancel'),
+                                'NOT_BOOKRD'=>__('booking.not_booked'),
                                 default                        => __('errors.logic'),
                             }
                         ], 422);

@@ -41,7 +41,7 @@ class ApartmentSeeder extends Seeder
             'floor_number'=>3,
             'is_furnished'=>true,
             'size'=> 120,
-            'user_id' => 1,
+            'user_id' => 2,
         ])->images()->create([
             'path'=>'apartments/6/UivhVgexduFzBKngQAvgKi9azg8axYpKPqIpqO7p.jpg'
         ]);

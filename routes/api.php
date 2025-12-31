@@ -111,6 +111,8 @@ Route::prefix('apartment')->
           Route::get('rejectAbook/{booking}',[BookingController::class,'reject']);
           Route::get('cancelAbook/{booking}',[BookingController::class,'cancel']);
           Route::get('showUserBookings',[BookingController::class,'showUserBookings']);
+          Route::get('approveAbooke/{booking_id}',[BookingController::class,'approve']);
+          Route::get('ownerRequests',[BookingController::class,'ownerRequests']);
 
 
 });

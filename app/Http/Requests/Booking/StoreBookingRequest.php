@@ -22,7 +22,7 @@ class StoreBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_date'=>'required|date',
+            'start_date'=>'required|date|after_or_equal:today',
             'end_date'=>'required|date|after:start_date'
         ];
     }
@@ -31,6 +31,7 @@ class StoreBookingRequest extends FormRequest
         return [
             'start_date.required'     => __('booking.start_date.required'),
             'start_date.date'         => __('booking.date'),
+            'start_date.after_or_equal'=> __('booking.start_date.after_or_equal'),
 
             'end_date.required'       => __('booking.end_date.required'),
             'end_date.date'           =>  __('booking.date'),
