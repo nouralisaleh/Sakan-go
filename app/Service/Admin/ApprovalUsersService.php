@@ -13,7 +13,8 @@ class ApprovalUsersService
         $user = User::findOrFail($data['id']);
 
         $user->update([
-            'status' => 'approved'
+            'status' => 'approved',
+            'rejected_reason' => null,
         ]);
 
         return [
@@ -21,6 +22,7 @@ class ApprovalUsersService
             'message' => __('auth.approved'),
             'data' => [
                 'user_status' => 'approved',
+                'rejected_reason' => null,
             ],
             'code' => 200,
         ];
@@ -39,7 +41,7 @@ class ApprovalUsersService
             'message' => __('auth.rejected'),
             'data' => [
                 'user_status' => 'rejected',
-                'rejected_reasone' => $user->rejected_reason,
+                'rejected_reason' => $user->rejected_reason,
             ],
             'code' => 200
         ];

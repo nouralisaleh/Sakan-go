@@ -57,8 +57,20 @@ class UserController extends Controller
             'chat_id' => $chat->id
         ], 200);
     }
+    public function restoreUser(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+    }
+    public function checkUpgradeStatus()
+    {
+        $user = Auth::guard('user_api')->user();
 
-   
-
-
+        $status = $this->userUpgradeService->checkUpgreadeStatus($user);
+        return response()->json(
+            $status,
+            $status['code']
+        );
+    }
 }

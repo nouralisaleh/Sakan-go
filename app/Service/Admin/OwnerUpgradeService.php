@@ -26,6 +26,7 @@ class OwnerUpgradeService
             'message' => __('auth.approved_request'),
             'data' => [
                 'user_request_status' => 'approved',
+                'request_rejected_reason' => null,
             ],
             'code' => 200
         ];

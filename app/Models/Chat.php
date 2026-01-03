@@ -19,4 +19,5 @@ class Chat extends Model
     {
         return $this->belongsTo(Apartment::class);
     }
+
 }

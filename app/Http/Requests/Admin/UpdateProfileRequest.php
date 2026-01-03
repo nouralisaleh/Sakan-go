@@ -28,7 +28,7 @@ class UpdateProfileRequest extends FormRequest
 
             'birth_date' => 'sometimes|date',
 
-            'phone_number'  => 'sometimes|numeric|regex:/^09[3-9]\d{7}$',
+            'phone_number'  => 'sometimes|numeric|regex:/^09[3-9]\d{7}/$',
             'country_code'  => 'sometimes|numeric|regex:/^\+963$/',
 
             'personal_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',

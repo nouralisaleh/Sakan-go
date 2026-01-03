@@ -9,36 +9,30 @@ use App\Http\Controllers\Controller;
 
 class FileController extends Controller
 {
-    public function show(string $type, User $user, FileService $fileService)
+    public function show(string $type, $id, FileService $fileService)
     {
-        $admin = Auth::guard('admin_api')->check();
+        $isAdmin = Auth::guard('admin_api')->check();
         $authUser = Auth::guard('user_api')->user();
 
-        // لا أدمن ولا يوزر
-        if (!$admin && !$authUser) {
+        if (!$isAdmin && !$authUser) {
             abort(401);
         }
 
-        // يوزر → فقط ملفه
-        if ($authUser && $authUser->id !== $user->id) {
-            abort(403);
-        }
+        $user = \App\Models\User::find($id);
+        $admin = \App\Models\Admin::find($id);
 
-        // 🔥 جيب البروفايل
-        $profile = $user->profile;
+        $target = $user ?: $admin;
+        abort_if(!$target, 404, 'المستخدم غير موجود');
 
-        abort_if(!$profile, 404);
+        $path = null;
+    if ($target instanceof \App\Models\Admin) {
+        $path = ($type === 'personal') ? $target->personal_image : $target->id_image;
+    } else {
+        $path = ($type === 'personal') ? $target->profile?->personal_image : $target->profile?->id_image;
+    }
 
-        $path = match ($type) {
-            'personal' => $profile->personal_image,
-            'id'       => $profile->id_image,
-            default    => null,
-        };
+    abort_if(!$path, 404, 'الصورة غير موجودة');
 
-        abort_if(!$path, 404);
-
-        return response()->file(
-            $fileService->getPrivateFile($path)
-        );
+    return response()->file($fileService->getPrivateFile($path));
     }
 }

@@ -26,9 +26,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['apartment_id', 'tenant_id','owner_id']);
+
         });
     }
-
 
     public function down(): void
     {

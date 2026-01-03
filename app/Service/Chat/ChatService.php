@@ -53,7 +53,7 @@ class ChatService
             'apartment_id' => $chat->apartment_id,
             'apartment_title' => $chat->apartment->title ?? null,
 
-            'other_user' => [
+            'other_user_info' => [
                 'id' => $otherUser->id,
                 'name' => $otherUser->profile->first_name . ' ' . $otherUser->profile->last_name,
                 'image' => $otherUser->profile->personal_image,

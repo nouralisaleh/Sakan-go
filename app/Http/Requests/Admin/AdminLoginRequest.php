@@ -36,5 +36,5 @@ class AdminLoginRequest extends FormRequest
             'email' => strtolower(trim($this->email)),
         ]);
     }
-    
+
 }

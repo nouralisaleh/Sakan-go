@@ -224,7 +224,7 @@ class UserAuthService
             'token' => $token,
             'phone_number' => $phone,
             'country_code' => $country_code,
-            'expires_at' => now()->addMinutes(15),
+            'expires_at' => now()->addHours(4),
             'created_at' => now(),
         ]);
 
@@ -299,14 +299,14 @@ class UserAuthService
 
         if (isset($data['personal_image'])) {
             $profileData['personal_image'] = $data['personal_image']->store(
-                'personal_images/' . $user->id,
+                'Users/personal_images/' . $user->id,
                 'private'
             );
         }
 
         if (isset($data['id_image'])) {
             $profileData['id_image'] = $data['id_image']->store(
-                'id_images/' . $user->id,
+                'Users/id_images/' . $user->id,
                 'private'
             );
         }
@@ -322,12 +322,17 @@ class UserAuthService
             'code' => 200
         ];
     }
-    public function logout(): void
+    public function logout(): array
     {
 
         /** @var \Tymon\JWTAuth\JWTGuard $guard */
         $guard = auth('user_api');
         $guard->logout();
+        return[
+            'status' => true,
+            'message' => __('auth.logged_out'),
+            'code' => 200
+        ];
     }
     public function refresh(): array
     {
@@ -339,6 +344,7 @@ class UserAuthService
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => $guard->getTTL() * 60,
+            'code' => 200,
         ];
     }
     public function profile(): array
@@ -383,7 +389,7 @@ class UserAuthService
                     'rejected_reason' => null,
                     'token' => null
                 ],
-                'code' => 403,
+                'code' => 200,
             ];
         }
         if ($user->status === 'rejected') {
@@ -395,7 +401,7 @@ class UserAuthService
                     'rejected_reason' => $user->rejected_reason,
                     'token' => null
                 ],
-                'code' => 403,
+                'code' => 200,
             ];
         }
         DB::table('otp_sessions')->where('id', $session->id)->delete();
@@ -406,7 +412,7 @@ class UserAuthService
 
         return [
             'status' => 'true',
-            'meesage' => __('auth.approved'),
+            'message' => __('auth.approved'),
             'data' => [
                 'user_status' => 'approved',
                 'rejected_reason' => null,
@@ -441,7 +447,7 @@ class UserAuthService
             }
 
             $updates['personal_image'] = $data['personal_image']->store(
-                'personal_images/' . $profile->id,
+                'Users/personal_images/' . $profile->id,
                 'private'
             );
         }
@@ -453,7 +459,7 @@ class UserAuthService
             }
 
             $updates['id_image'] = $data['id_image']->store(
-                'id_images/' . $profile->id,
+                'Users/id_images/' . $profile->id,
                 'private'
             );
         }
@@ -464,16 +470,5 @@ class UserAuthService
 
         return $user->load('profile');
     }
-    public function restoreUser(int $userId): array
-    {
-        $user = User::withTrashed()->findOrFail($userId);
-
-        $user->restore();
-
-        return [
-            'status' => true,
-            'message' => 'User restored successfully',
-            'code' => 200
-        ];
-    }
+   
 }

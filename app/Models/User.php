@@ -15,15 +15,14 @@ class User  extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use SoftDeletes;
 
 
     protected $guarded = [];
-
-    use SoftDeletes;
+    protected $dates = ['deleted_at'];
     protected $hidden = [
         'remember_token',
     ];
-
     protected $casts = [
         'rejected_reason' => 'array',
     ];
@@ -33,28 +32,27 @@ class User  extends Authenticatable implements JWTSubject
             'phone_verified_at' => 'datetime',
         ];
     }
+
+
     public function profile()
     {
         return $this->hasOne(UserProfile::class);
     }
-
     public function apartments()
     {
         return $this->hasMany(Apartment::class);
     }
-
     public function ownerRequest()
     {
         return $this->hasOne(OwnerRequest::class);
     }
-
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
-
     public function getJWTCustomClaims()
     {
         return [];
     }
+    
 }
