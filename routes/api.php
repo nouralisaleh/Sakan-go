@@ -70,7 +70,7 @@ Route::prefix('user')->group(function () {
     Route::middleware('auth:user_api')->group(function () {
         Route::post('update-profile', [UserAuthController::class, 'updateProfile']);
         Route::get('show-profile', [UserAuthController::class, 'profile']);
-        Route::get('refresh-token', [UserAuthController::class, 'refresh']); // aisha
+        Route::post('refresh-token', [UserAuthController::class, 'refresh']); // aisha
         Route::post('upgrade', [UserController::class, 'upgrade']);
         Route::post('logout', [UserAuthController::class, 'logout']);
         Route::post('start-chat', [UserController::class, 'startChat']);

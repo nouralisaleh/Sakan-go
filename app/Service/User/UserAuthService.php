@@ -319,7 +319,7 @@ class UserAuthService
         return [
             'status' => true,
             'message' => __('auth.user_profile_submitted'),
-            'code' => 200
+            'code' => 201
         ];
     }
     public function logout(): array
@@ -470,5 +470,5 @@ class UserAuthService
 
         return $user->load('profile');
     }
-   
+
 }

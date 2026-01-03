@@ -46,6 +46,14 @@ class User  extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(OwnerRequest::class);
     }
+    public function chatsAsTenant()
+    {
+        return $this->hasMany(Chat::class, 'tenant_id');
+    }
+    public function chatsAsOwner()
+    {
+        return $this->hasMany(Chat::class, 'owner_id');
+    }
     public function getJWTIdentifier()
     {
         return $this->getKey();
