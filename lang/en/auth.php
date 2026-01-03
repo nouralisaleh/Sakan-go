@@ -38,5 +38,7 @@ return [
     'email_not_found' => 'Email does not exist.',
     'failed_profile' => 'Unauthorized or token expired',
     'user_profile_submitted' => 'User profile submitted successfully and is pending approval.',
+    'only_owner_allowed'=>'Only apartment owner is allowed to perform this action',
+    'forbidden_action'=>'This action is allowed only for the booker',
 
 ];

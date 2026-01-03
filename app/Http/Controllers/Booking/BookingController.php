@@ -23,16 +23,18 @@ class BookingController extends Controller
                 'status'  => true,
                 'message' => __('booking.pending'),
                 'data'    => new BookingResource($booking),
+                'code'    => 201,
             ], 201);
         }
     public function reject($bookingId, OwnerConsentService $bookingService)
     {
-            $booking = $bookingService->reject($bookingId);
+        $user=auth('user_api')->user();
+            $booking = $bookingService->reject($bookingId,$user);
 
             return response()->json([
                 'status' => true,
                 'message'=> __('booking.rejected'),
-                //'data' =>new BookingResource($booking),
+                'code'=>200,
             ], 200);
 
 
@@ -45,49 +47,67 @@ class BookingController extends Controller
             return response()->json([
                 'status' => true,
                 'message'=> __('booking.cancel_ok'),
-                //'data' =>new BookingResource($booking),
+                'code'=>200,
             ], 200);
 
-    }public function showUserBookings(BookingService $bookingService)
+    }
+    public function showUserBookings(BookingService $bookingService)
     {
-    $bookings=$bookingService->showUserBookings();
-    if(!$bookings)
-    {
+        $user=auth('user_api')->user();
+        $bookings=$bookingService->showUserBookings($user);
+        if($bookings->isEmpty())
+        {
+            return response()->json([
+                'status'=> false,
+                'message'=>'No booking ',
+                'code'=>200,
+            ]);
+
+        }
         return response()->json([
-            'status'=> false,
-            'message'=>'No booking '
+            'status'=> true,
+            'data'=>bookingResource::collection($bookings),
+            'code'=>200
         ]);
 
     }
-    return response()->json([
-        'status'=> true,
-        'data'=>bookingResource::collection($bookings),
-    ]);
-
-    }
-    public function ownerRequests()
-     {  
-    //     $user = auth('user_api')->user();
-    //     if($user->role !== 'owner')
-    //     {
-    //       return response()->json([
-    //         'status'=> false,
-    //         'message'=>'لست مخول للقيام باي شي يخص المالك',
-    //       ]);
-
-    //     }
-    //     $apartments=Apartment::where('user_id', $user->id)->get();
-    //     return response()->json([
-    //         'status'=> true,
-    //         'data'=> $apartments,
-    //     ]);
-
-    }
-    public function approve($booking_id,OwnerConsentService $ownerConsentService)
+    public function ownerBookingRequests(BookingService $bookingService)
     {
-        $book= $ownerConsentService->approve($booking_id);
+        $user=auth('user_api')->user();
+        if($user->role !=='owner')
+        {
+            return response()->json([
+                'status'=> false,
+                'message'=>__('auth.only_owner_allowed'),
+                'code'=>403,
+            ]);
+        }
+        $bookings=$bookingService->ownerBookingRequests($user);
         return response()->json([
-            'data'=>$book
+            'status'=> true,
+            'data'=>BookingResource::collection($bookings),
+            'code'=>200
+        ]);
+
+    }
+    public function approve(int $booking_id,OwnerConsentService $ownerConsentService)
+    {
+        $user=auth('user_api')->user();
+        $book= $ownerConsentService->approve($booking_id,$user);
+        return response()->json([
+            'status'=>true,
+            'data'=>$book,
+            'code'=>200
+        ]);
+    }
+    Public function showABook(int $booking_id,BookingService $bookingService)
+    { 
+        $booking= $bookingService->showABook($booking_id);
+     
+        return response()->json([
+            'status'=>true,
+            'data'=>new BookingResource($booking),
+            'code'=>200
         ]);
     }
 

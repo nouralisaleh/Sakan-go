@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
                   UserSeeder::class,
                   //UserProfileSeeder::class,
                   ApartmentSeeder::class,
+                  BookingSeeder::class,
           
         ]);    
     }

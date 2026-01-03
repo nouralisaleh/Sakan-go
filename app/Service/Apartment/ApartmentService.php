@@ -40,7 +40,7 @@ class ApartmentService
     });
 }
 
-  public function update(int  $apartment_id, array $data, array $images = [])
+  public function update(int  $apartment_id, array $data, array $images = [],$user)
     { 
 
          $apartment=Apartment::where('id',$apartment_id)->first();
@@ -49,7 +49,7 @@ class ApartmentService
            throw new ModelNotFoundException('APARTMENT_NOT_FOUND');
         } 
 
-        if ($apartment->user_id !== auth('user_api')->id())
+        if ($apartment->user_id !== $user->id)
         {
            throw new \DomainException('NOT_APARTMENT_OWNER');
         }

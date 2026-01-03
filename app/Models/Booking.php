@@ -19,4 +19,8 @@ class Booking extends Model
     {
         return $this->belongsTo(Apartment::class);
     }
+    public function bookingUpdateRequests()
+    {
+        return $this->hasMany(BookingUpdateRequest::class);
+    }
 }

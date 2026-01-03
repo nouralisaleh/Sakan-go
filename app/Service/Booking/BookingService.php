@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class BookingService{
 
-    public function store(int $userId, $apartment_id, array $data): Booking
+    public function store(int $userId, int $apartment_id, array $data): Booking
     {
-        $apartment=Apartment::find($apartment_id);
+        $apartment=Apartment::findOrFail($apartment_id);
         if(!$apartment){
             throw new ModelNotFoundException('APARTMENT_NOT_FOUND');
         }
@@ -46,14 +46,11 @@ class BookingService{
             ]);
         });
     }
-    // public function update($booking_id, $data)
-    // {
-      
-    // }
 
-    public function cancel($booking_id)
+
+    public function cancel(int $booking_id)
     {
-        $booking = Booking::find($booking_id);
+        $booking = Booking::findOrFail($booking_id);
 
         if (!$booking) {
             throw new ModelNotFoundException('BOOKING_NOT_FOUND');
@@ -70,10 +67,26 @@ class BookingService{
         return $booking;
     }
 
-    public function showUserBookings()
+    public function showUserBookings($user)
     {
-        $bookings=auth('user_api')->user()->bookings;
+        $bookings=$user->bookings;
         return $bookings;
+    }
+    public function ownerBookingRequests($user)
+    {
+
+       $apartment = Apartment::where('user_id',$user->id)->get();
+        $bookings=Booking::whereIn('apartment_id',$apartment->pluck('id'))->where('status','pending')->get();
+        return $bookings;
+    }
+    public function showABook(int $booking_id)
+    {
+        $booking=Booking::find($booking_id);
+        if(!$booking)
+        {
+            throw new ModelNotFoundException('BOOKING_NOT_FOUND');
+        }
+        return $booking;
     }
     public function autoCompleteExpiredBookings(): void
     {

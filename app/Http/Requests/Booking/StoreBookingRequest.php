@@ -11,7 +11,7 @@ class StoreBookingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth('user_api')->check();
     }
 
     /**
@@ -23,7 +23,7 @@ class StoreBookingRequest extends FormRequest
     {
         return [
             'start_date'=>'required|date|after_or_equal:today',
-            'end_date'=>'required|date|after:start_date'
+            'end_date'=>'required|date|after_or_equal:start_date'
         ];
     }
     public function messages(): array

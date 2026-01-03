@@ -2,6 +2,16 @@
  return [
     'start_date'=>[
         'required'=>'start date is required',
+        'after_or_equal'=>'the start date must be today or after'
+
+    ],
+    'update_start_date'=>[
+        'required'=>'the update start date is required',
+        'after_or_equal'=>'the update start date must be after or equal of update start date'
+    ],
+    'update_end_date'=>[
+        'required'=>'the update end date is required',
+        'after_or_equal'=>'the update end date must be after or equal of update start date'
     ],
      'end_date'=>[
         'required'=>'end date is required',
@@ -17,6 +27,12 @@
     'update_ok'=>'booking updated',
     'delete_ok'=>'booking deleted',
     'rejected'=>'owner rejected the booking,contact with the owner to learn more',
-    'not_booked'=>'no booking for approve'
+    'not_booked'=>'no booking for approve',
+    'update_request_not_found'=>'booking update request not found',
+    'update_request_cancelled'=>'booking update request cancelled',
+    'update_request_rejected'=>'booking update request rejected',
+    'update_request_approved'=>'booking update request approved',
+    'update_request_created'=>'booking update request created, you must wait for owner approval',
+    'update_request_done_updated'=>'booking updated as your request',
 
  ];

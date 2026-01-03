@@ -57,7 +57,7 @@ public function store(StoreApartmentRequest $request, ApartmentService $service)
      $validated =$request->safe()->except('images');
      $images = $request->file('images',[]);
 
-     $updatedapartment=$apartmentService->update($apartment,$validated,$images);
+     $updatedapartment=$apartmentService->update($apartment,$validated,$images,auth('user_api')->user());
      return response()->json([
         'status'=>true,
         'message'=>__('apartments.updated_successful'),

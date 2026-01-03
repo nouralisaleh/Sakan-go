@@ -15,7 +15,7 @@ class StoreApartmentRequest extends FormRequest
    public function authorize(): bool
     {
 
-     return true;
+     return auth('user_api')->check();
     }
 
 
