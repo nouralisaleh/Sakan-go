@@ -41,4 +41,7 @@ return [
     'failed_profile' => 'Unauthorized or token expired',
     'message_body' => 'Your verification code is: :otp.',
 
+     'only_owner_allowed'=>'Only apartment owner is allowed to perform this action',
+     'forbidden_action'=>'This action is allowed only for the user who made the booking',
+
 ];

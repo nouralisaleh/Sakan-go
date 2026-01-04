@@ -99,7 +99,7 @@ class BookingUpdateRequestService
         }
 
         if ($request->booking->apartment->user_id !== $user->id) {
-            throw new DomainException('FORBIDDEN_ACTION');
+            throw new DomainException('NOT_APARTMENT_OWNER');
         }
 
 
@@ -123,7 +123,7 @@ class BookingUpdateRequestService
             }
 
             if ($request->booking->apartment->user_id !== $user->id) {
-                throw new DomainException('FORBIDDEN_ACTION');
+                throw new DomainException('NOT_APARTMENT_OWNER');
             }
 
             if ($request->status !== 'pending') {

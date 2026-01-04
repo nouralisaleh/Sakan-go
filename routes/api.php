@@ -8,6 +8,11 @@ use  App\Http\Controllers\Auth\UserAuthController;
 use  App\Http\Controllers\File\FileController;
 use App\Http\Controllers\user\UserController;
 use App\Http\Middleware\OtpSessionMiddleware;
+use App\Http\Middleware\EnsureUser;
+use App\Http\Controllers\Apartment\ApartmentController;
+use App\Http\Controllers\Favorite\FavoriteController;
+use App\Http\Controllers\Booking\BookingController;
+use App\Http\Controllers\Booking\BookingUpdateRequestController;
 
 // /////////////////////////////Admin Routes/////////////////////////////////////////////////////
 
@@ -86,6 +91,55 @@ Route::middleware(['throttle:5,1'])->group(function () {
     Route::post('send-otp', [UserController::class, 'sendPhoneOtp']);
     Route::post('verify-otp', [UserController::class, 'verifyPhoneOtp']);
 });
+   Route::prefix('apartment')-> middleware(['auth:user_api'])->group(function () {
+    
+        Route::get('showApartments',[ApartmentController::class,'show']);
+        Route::post('apartmentFiltering',[ApartmentController::class,'filter']);
+        Route::get('favoriteUserApartments',[FavoriteController::class,'favoriteList']);
+        Route::get('showLatestApartments',[ApartmentController::class,'showLatest']);
+
+        Route::get('showApartmentOwner/{apartment}',[ApartmentController::class,'apartmentOwner']);
+        Route::get('homePage',[ApartmentController::class,'home']);
+        Route::get('addToFavorite/{apartment}',[FavoriteController::class,'toggel']);
+
+   });    
+Route::prefix('apartment')->
+   middleware(['auth:user_api',EnsureUser::class])->group(function () {
+    
+        Route::post('/updateApartment/{apartment}',[ApartmentController::class,'update']);
+        Route::delete('deleteApartment/{apartment}',[ApartmentController::class,'delete']);
+        Route::post('/insertApartment',[ApartmentController::class,'store']);
+
+
+
+        
+   });
+
+
+   Route::prefix('booking')->middleware(['auth:user_api'])->group(function () {
+
+          Route::post('bookAnApartment/{apartment}',[BookingController::class,'store']);
+          Route::get('cancelAbook/{booking}',[BookingController::class,'cancel']);
+          Route::get('showUserBookings',[BookingController::class,'showUserBookings']);
+          Route::get('showAbook/{booking}',[BookingController::class,'showABook']);
+
+
+          Route::post('updateBooking/{booking}',[BookingUpdateRequestController::class,'store']);
+          Route::get('showUserBookingUpdateRequests',[BookingUpdateRequestController::class,'showUserBookingUpdateRequests']);
+          Route::get('showBookingUpdateRequest/{booking_update_request}',[BookingUpdateRequestController::class,'show']);
+          Route::get('cancelBookingUpdateRequest/{booking_update_request}',[BookingUpdateRequestController::class,'cancel']);
+
+});
+    Route::prefix('booking')->middleware(['auth:user_api',EnsureUser::class])->group(function () {
+             Route::get('rejectAbook/{booking}',[BookingController::class,'reject']);
+             Route::get('approveAbooke/{booking_id}',[BookingController::class,'approve']);
+             Route::get('ownerBookingRequests',[BookingController::class,'ownerBookingRequests']);
+
+             Route::get('OwnerBookingUpdateRequests',[BookingUpdateRequestController::class,'showOwnerBookingUpdateRequests']);
+             Route::get('approveBookingUpdateRequest/{booking_update_request}',[BookingUpdateRequestController::class,'approve']);
+             Route::get('rejectBookingUpdateRequest/{booking_update_request}',[BookingUpdateRequestController::class,'reject']);
+         
+    });
 
 // //////////////////////////////////Shared////////////////////////////////////////////////////////////
 

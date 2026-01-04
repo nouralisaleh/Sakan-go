@@ -17,7 +17,7 @@ class OwnerConsentService{
             }
         if($booking->apartment->user_id !== $user->id)
         {
-            throw new \DomainException('FORBIDDEN_ACTION');
+            throw new \DomainException('NOT_APARTMENT_OWNER');
         }
         if (in_array($booking->status, ['rejected', 'cancelled']))
             {
@@ -41,7 +41,7 @@ class OwnerConsentService{
         }
         if($booking->apartment->user_id !== $user->id)
         {
-            throw new \DomainException('FORBIDDEN_ACTION');
+            throw new \DomainException('NOT_APARTMENT_OWNER');
         }
 
         if ($booking->status !== 'pending') {
