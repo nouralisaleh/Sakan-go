@@ -12,11 +12,12 @@ return new class extends Migration
         Schema::create('phone_otps', function (Blueprint $table) {
             $table->id();
             $table->string('phone_number');
-            $table->string('country_code');
+            $table->string('country_code')->default('+963');
             $table->string('otp');
             $table->boolean('is_verified')->default(false);
             $table->boolean('is_used')->default(false);
-            $table->timestamp('expires_at');
+            $table->dateTime('expires_at');
+            $table->boolean('used_for_profile')->default(false);
             $table->timestamp('resend_available_at')->nullable();
             $table->timestamps();
         });
@@ -26,5 +27,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('phone_otps');
     }
-    
+
 };

@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->enum('request_status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->text('request_rejected_reason')->nullable();
+            $table->json('request_rejected_reason')->nullable();
             $table->timestamps();
         });
     }

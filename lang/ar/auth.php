@@ -15,7 +15,8 @@ return [
     'pending_request' => 'انت تملك طلب ترقية قيد المعالجة',
     'approved_request' => 'تم قبول طلب الترقية',
     'rejected_request' => 'تم رفض طلب الترقية',
-    'Upgrade_request'=>'تم تقديم طلب الترقية بنجاح',
+    'deleted' => 'تم حذف المستخدم بنجاح',
+    'Upgrade_request' => 'تم تقديم طلب الترقية بنجاح',
 
 
 
@@ -35,9 +36,10 @@ return [
     'email_not_found' => 'البريد الإلكتروني غير موجود.',
     'failed_profile' => 'توكن منتهي الصلاحية او مستخدم غير مسجل دخول',
     'refreshed' => 'تم تحديث الحساب بنجاح',
-
+    'phone_not_verified' => ' لم يتم التحقق من الرقم بعد',
+    'already_owner' => 'أنت بالفعل مالك',
+    'existing_pending_request'=>'لديك طلب معلق حاليًا.',
     'user_profile_submitted' => 'تم تقديم الملف الشخصي للمستخدم بنجاح وهو قيد الموافقة.',
-    'only_owner_allowed'=>'فقط مالك الشقة مسموح له بهذا الإجراء',
-    'forbidden_action'=>'الاجراء مسموح فقط لمن قام بالحجز',
+    'message_body' => 'رمز التحقق الخاص بك هو: :otp.',
 
 ];

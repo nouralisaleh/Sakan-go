@@ -14,8 +14,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('personal_image')->nullable();
-            $table->string('id_image')->nullable();
+            $table->string('personal_image');
+            $table->string('id_image');
             $table->date('birth_date');
             $table->timestamp('completed_at')->nullable();
             $table->boolean('is_completed')->default(false);

@@ -10,6 +10,9 @@ use App\Http\Requests\User\VerifyOTPPhoneRequest;
 use App\Http\Resources\UserResource;
 use App\Service\User\UserAuthService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 use Illuminate\Http\Request;
 
 
@@ -41,31 +44,58 @@ class UserAuthController extends Controller
     }
     public function verifyPhoneOtp(VerifyOTPPhoneRequest $request)
     {
-        $validated = $request->validated();
         $result = $this->service->verifyPhoneOtp(
-            $validated['phone_number'],
-            $validated['country_code'],
-            $validated['otp']
+            $request->phone_number,
+            $request->country_code,
+            $request->otp
+        );
+
+        return response()->json($result, $result['code'])
+            ->cookie(
+                'otp_session',
+                $result['cookie'] ?? '',
+                15,
+                '/',
+                null,
+                true,
+                true
+            );
+    }
+    public function submitProfile(UserProfileRequest $request)
+    {
+        $otpToken = $request->bearerToken();
+
+
+        if (!$otpToken) {
+            return response()->json([
+                'status' => false,
+                'message' => 'OTP token missing'
+            ], 401);
+        }
+
+
+        $result = $this->service->submitProfile(
+            $request->validated(),
+            $otpToken
         );
         return response()->json(
             $result,
             $result['code']
         );
     }
-    public function submitProfile(UserProfileRequest $request)
+    public function CheakStatus(Request $request)
     {
-        $data = $request->only(['phone_number', 'country_code', 'first_name', 'last_name', 'birth_date']);
-        if ($request->hasFile('personal_image')) {
-            $data['personal_image'] = $request
-                ->file('personal_image')
-                ->store('personal_images', 'private');
+        $otpToken = $request->bearerToken();
+
+        if (!$otpToken) {
+            return response()->json([
+                'status' => false,
+                'message' => 'OTP token missing'
+            ], 401);
         }
-        if ($request->hasFile('id_image')) {
-            $data['id_image'] = $request
-                ->file('id_image')
-                ->store('id_images', 'private');
-        }
-        $result = $this->service->submitProfile($data);
+
+        $result = $this->service->chackStatus($otpToken);
+
         return response()->json(
             $result,
             $result['code']
@@ -73,7 +103,11 @@ class UserAuthController extends Controller
     }
     public function logout(Request $request)
     {
-        return $this->service->logout($request);
+        $result = $this->service->logout($request);
+        return response()->json(
+            $result,
+            $result['code']
+        );
     }
     public function profile()
     {
@@ -84,10 +118,10 @@ class UserAuthController extends Controller
             $data['code']
         );
     }
-
     public function refresh()
     {
-        return $this->service->refresh();
+        $result = $this->service->refresh();
+        return [$result, $result['code']];
     }
     public function updateProfile(UpdateUserProfileRequest $request)
     {
@@ -100,7 +134,8 @@ class UserAuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => __('auth.profile_updated'),
-            'user'   => new UserResource($updatedUser)
-        ], 201);
+            'user'   => new UserResource($updatedUser),
+            'code'    => 200,
+        ]);
     }
 }

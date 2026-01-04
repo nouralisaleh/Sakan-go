@@ -14,8 +14,6 @@ class UserProfileRequest extends FormRequest
     {
         return [
             // 'user_id' => 'required|exists:users,id',
-            'phone_number' => 'required|numeric|digits_between:5,16',
-            'country_code'  => 'required|string|min:2|max:4|starts_with:+',
             'first_name' => 'required|string|max:20',
             'last_name' => 'required|string|max:20',
             'birth_date' => 'required|date',
@@ -46,4 +44,5 @@ class UserProfileRequest extends FormRequest
             'id_image.max' => __('validation.max.file', ['attribute' => 'id image', 'max' => 4096]),
         ];
     }
+
 }

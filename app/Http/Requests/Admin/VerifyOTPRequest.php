@@ -22,8 +22,6 @@ class VerifyOTPRequest extends FormRequest
             'otp' => 'required|numeric|digits:6'
         ];
     }
-
-
     public function messages()
     {
         return [
@@ -35,8 +33,7 @@ class VerifyOTPRequest extends FormRequest
             'otp.digits' => __('validation.digits', ['attribute' => 'OTP', 'digits' => 6]),
         ];
     }
-
-     protected function prepareForValidation()
+    protected function prepareForValidation()
     {
         $this->merge([
             'email' => strtolower(trim($this->email)),

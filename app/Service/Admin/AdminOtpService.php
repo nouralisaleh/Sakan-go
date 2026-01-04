@@ -4,14 +4,33 @@ namespace App\Service\Admin;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
 use App\Mail\ForgetPassword;
-use Exception;
+use Carbon\Carbon;
 
 class AdminOtpService
 {
-    public function sendOtp(string $email): int
+    public function sendOtp(string $email): array
     {
-        $otp = rand(100000, 999999);
+
+        $exitingOtp = DB::table('password_reset_otps')
+            ->where('email', $email)
+            ->where('is_used', false)
+            ->first();
+
+        if ($exitingOtp) {
+            $expiresAt = Carbon::parse($exitingOtp->expires_at);
+            if (now()->lessThan($expiresAt)) {
+                $second = now()->diffInSeconds($expiresAt);
+                return [
+                    'message' => __('auth.otp_already_sent', ['target' => 'email']),
+                    'retry_after' => $second,
+                    'code' => 429
+                ];
+            }
+        }
+        $otp = rand(100000, max: 999999);
 
         DB::table('password_reset_otps')->updateOrInsert(
             ['email' => $email],
@@ -26,9 +45,15 @@ class AdminOtpService
 
         Mail::to($email)->send(new ForgetPassword($otp));
 
-        return 15 * 60;
+        return [
+            'message' => __(
+                'auth.otp_sent',
+                ['target' => 'email']
+            ),
+            'code' => 200
+        ];
     }
-    public function verifyOtp(string $email, string $otp): void
+    public function verifyEmailOtp(string $email, string $otp): array
     {
         $record = DB::table('password_reset_otps')
             ->where('email', $email)
@@ -37,18 +62,34 @@ class AdminOtpService
             ->first();
 
         if (!$record) {
-            throw new Exception('INVALID_OTP');
+            return [
+                'message' => __(
+                    'auth.otp_invalid',
+                    ['target' => 'email']
+                ),
+                'code' => 400
+            ];
         }
+        $expiresAt = Carbon::parse($record->expires_at);
 
-        if (now()->greaterThan($record->expires_at)) {
-            throw new Exception('OTP_EXPIRED');
+        if (now()->greaterThan($expiresAt)) {
+            return [
+                'message' => __('auth.otp_expired', ['target' => 'email']),
+                'code' => 400
+            ];
         }
 
         DB::table('password_reset_otps')
             ->where('id', $record->id)
             ->update(['is_verified' => true]);
+
+        return [
+            'message' => __('auth.otp_verified', ['target' => 'email']),
+            'now' => now()->toDateTimeString(),
+            'code' => 200
+        ];
     }
-    public function resetPassword(string $email, string $hashedPassword): void
+    public function resetPassword(string $email, string $hashedPassword): array
     {
         $record = DB::table('password_reset_otps')
             ->where('email', $email)
@@ -57,16 +98,36 @@ class AdminOtpService
             ->first();
 
         if (!$record) {
-            throw new Exception('OTP_NOT_VERIFIED');
+            return [
+                'message' => __(
+                    'auth.otp_not_verified',
+                    ['target' => 'email']
+                ),
+                'code' => 400
+            ];
+        }
+        if (now()->greaterThan(Carbon::parse($record->expires_at))) {
+            return [
+                'message' => __(
+                    'auth.otp_expired',
+                    ['target' => 'email']
+                ),
+                'code' => 400
+            ];
         }
 
-        if (now()->greaterThan($record->expires_at)) {
-            throw new Exception('OTP_EXPIRED');
-        }
+        Admin::where('email', $email)->update([
+            'password' => Hash::make($hashedPassword)
+        ]);
 
         DB::table('password_reset_otps')
             ->where('id', $record->id)
             ->update(['is_used' => true]);
-    }
 
+        return [
+            'message' => __('auth.password_reset_success'),
+            'code' => 200
+        ];
+    }
+    
 }

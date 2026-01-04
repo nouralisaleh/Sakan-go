@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Requests\Admin;
-
 use Illuminate\Foundation\Http\FormRequest;
 
 class SendOTPRequest extends FormRequest
@@ -11,8 +10,6 @@ class SendOTPRequest extends FormRequest
     {
         return true;
     }
-
-
     public function rules(): array
     {
         return [
@@ -20,7 +17,6 @@ class SendOTPRequest extends FormRequest
 
         ];
     }
-
     public function messages()
     {
         return [
@@ -29,11 +25,11 @@ class SendOTPRequest extends FormRequest
             'email.exists' => __('validation.exists', ['attribute' => 'email']),
         ];
     }
-
      protected function prepareForValidation()
     {
         $this->merge([
             'email' => strtolower(trim($this->email)),
         ]);
     }
+
 }

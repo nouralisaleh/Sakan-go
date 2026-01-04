@@ -4,118 +4,126 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminLoginRequest;
+use App\Http\Requests\Admin\ResetPasswordRequest;
 use App\Service\Admin\AdminAuthService;
-use App\Http\Resources\AdminResource;
 use App\Http\Requests\Admin\UpdateProfileRequest;
-use APP\Http\Requests\Admin\SendOTPRequest;
+use App\Http\Requests\Admin\SendOTPRequest;
 use App\Http\Requests\Admin\VerifyOTPRequest;
 use App\Service\Admin\AdminOtpService;
+use App\Models\Admin;
+
 
 
 
 class AdminAuthController extends Controller
 {
-    public function login(AdminLoginRequest $request, AdminAuthService $service)
+    protected AdminOtpService $adminOtpService;
+    protected AdminAuthService $adminAuthService;
+
+    public function __construct(AdminOtpService $adminOtpService, AdminAuthService $adminAuthService)
     {
-
-        try {
-            $result = $service->login(
-                $request->validated(),
-                $request->boolean('remember', false)
-            );
-
-            return response()->json([
-                'message' => __('auth.logged_in'),
-                'admin'   => new AdminResource($result['admin']),
-                'access_token' => $result['access_token'],
-                'token_type'   => $result['token_type'],
-                'expires_in'   => $result['expires_in'],
-            ], 200);
-        } catch (\Exception $e) {
-
-            if ($e->getMessage() === 'INVALID_CREDENTIALS') {
-                return response()->json([
-                    'success' => false,
-                    'message' => __('auth.invalid_credentials')
-                ], 401);
-            }
-
-            throw $e;
-        }
+        $this->adminOtpService = $adminOtpService;
+        $this->adminAuthService = $adminAuthService;
     }
-
-    public function logout(AdminAuthService $service)
+    public function login(AdminLoginRequest $request,)
     {
-        $service->logout();
+
+        $result = $this->adminAuthService->login(
+            $request->validated(),
+            $request->boolean('remember', false)
+        );
 
         return response()->json([
-            'success' => true,
-            'message' => __('auth.logged_out')
-        ], 200);
+            $result,
+        ], $result['code']);
     }
-
-    public function refresh(AdminAuthService $service)
+    public function logout()
     {
-        $data = $service->refresh();
+        $result = $this->adminAuthService->logout();
 
         return response()->json([
-            'success' => true,
-            $data
-        ], 201);
+            $result
+        ], $result['code']);
     }
+    public function refresh()
+    {
+        $result = $this->adminAuthService->refresh();
 
+        return response()->json([
+            $result,
+            $result['code']
+        ]);
+    }
     public function profile()
-    {
-        return response()->json([
-            'success' => true,
-            'admin' => new AdminResource(auth('admin_api')->user()),
-        ], 200);
-    }
-
-    public function updateProfile(UpdateProfileRequest $request, AdminAuthService $service)
     {
         $admin = auth('admin_api')->user();
 
-        $updatedAdmin = $service->updateProfile(
+        $result = $this->adminAuthService->show($admin);
+
+        return response()->json([
+            $result,
+            $result['code']
+        ]);
+    }
+    public function updateProfile(UpdateProfileRequest $request)
+    {
+        $admin = auth('admin_api')->user();
+
+        $updatedAdmin = $this->adminAuthService->updateProfile(
             $admin,
             $request->validated() + $request->allFiles()
         );
 
         return response()->json([
-            'success' => true,
-            'message' => __('auth.profile_updated'),
-            'admin'   => new AdminResource($updatedAdmin)
-        ], 201);
+            $updatedAdmin,
+            $updatedAdmin['code']
+        ]);
     }
-
-    public function sendOtp(SendOTPRequest $request, AdminOtpService $otpService)
+    public function sendOtp(SendOTPRequest $request)
     {
         $data = $request->validated();
 
         try {
-            $expires = $otpService->sendOtp($data['email']);
+            $result = $this->adminOtpService->sendOtp($data['email']);
 
             return response()->json([
-                'status' => true,
-                'message' => __('auth.otp_sent', ['target' => 'email']),
-                'data' => ['expires_in' => $expires]
-            ], 200);
+                $result,
+                $result['code']
+            ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => __('auth.unable_send_otp', ['target' => 'email']),
-            ], 500);
+                'message' => __(
+                    'auth.unable_send_otp',
+                    ['target' => 'email'],
+                ),
+                'code' => 500
+            ]);
         }
     }
-
-    public function verifyOtp(VerifyOTPRequest $request, AdminOtpService $service)
+    public function verifyOtp(VerifyOTPRequest $request)
     {
-        $result = $service->verifyOtp(
+        $result = $this->adminOtpService->verifyEmailOtp(
             $request->email,
             $request->otp
         );
 
-        return response()->json($result, $result['status'] ? 200 : 400);
+        return response()->json(
+            $result,
+            $result['code']
+        );
     }
+    public function resetPasswordWithOtp(ResetPasswordRequest $request)
+    {
+        $validate = $request->validated();
+        $result = $this->adminOtpService->resetPassword(
+            $validate['email'],
+            $validate['new_password']
+        );
 
+        return response()->json(
+            $result,
+            $result['code']
+        );
+    }
     
 }

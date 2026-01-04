@@ -12,11 +12,13 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('phone_number')->unique();
-            $table->string('country_code');
+            $table->string('country_code')->default('+963');
             $table->timestamp('phone_verified_at')->nullable();
             $table->enum('status', ['newUser', 'pending', 'rejected', 'approved'])->default('newUser');
             $table->enum('role', ['tenant', 'owner'])->default('tenant');
-            $table->text('rejected_reason')->nullable();
+            $table->json('rejected_reason')->nullable();
+            $table->string('fcm_token')->nullable();
+            $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -26,5 +28,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('users');
     }
-    
+
 };

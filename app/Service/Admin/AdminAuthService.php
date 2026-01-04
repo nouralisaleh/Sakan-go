@@ -5,6 +5,8 @@ namespace App\Service\Admin;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\AdminResource;
+use App\Http\Resources\UserResource;
 
 class AdminAuthService
 {
@@ -13,30 +15,38 @@ class AdminAuthService
         $admin = Admin::where('email', $data['email'])->first();
 
         if (!$admin || !Hash::check($data['password'], $admin->password)) {
-            throw new \Exception('INVALID_CREDENTIALS', 401);
+            return [
+                'message' => __('auth.invalid_credentials'),
+                'code' => 401
+            ];
         }
         /** @var \Tymon\JWTAuth\JWTGuard $guard */
         $guard = auth('admin_api');
 
-        // TTL
         $ttl = $remember ? 60 * 24 * 7 : 60;
-        $guard->setTTL($ttl);
 
-        $token = $guard->login($admin);
+        $token = $guard->setTTL($ttl)->login($admin);
 
         return [
-            'admin' => $admin,
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => $guard->factory()->getTTL() * 60,
+            'message' => __('auth.logged_in'),
+            'data' => [
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => $guard->factory()->getTTL() * 60,
+            ],
+            'code' => 200
         ];
     }
-    public function logout(): void
+    public function logout(): array
     {
 
         /** @var \Tymon\JWTAuth\JWTGuard $guard */
         $guard = auth('admin_api');
         $guard->logout();
+        return [
+            'message' => __('auth.logged_out'),
+            'code' => 200
+        ];
     }
     public function refresh(): array
     {
@@ -48,19 +58,19 @@ class AdminAuthService
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => $guard->getTTL() * 60,
+            'code' => 200
         ];
     }
-    public function updateProfile(Admin $admin, array $data): Admin
+    public function updateProfile(Admin $admin, array $data): array
     {
+
         $updates = [];
 
         foreach (
             [
                 'name',
                 'birth_date',
-                'email',
                 'phone_number',
-                'country_code'
 
             ] as $field
         ) {
@@ -76,7 +86,7 @@ class AdminAuthService
             }
 
             $updates['personal_image'] = $data['personal_image']->store(
-                'personal_images/' . $admin->id,
+                'Admin/personal_images/' . $admin->id,
                 'private'
             );
         }
@@ -89,7 +99,7 @@ class AdminAuthService
             }
 
             $updates['id_image'] = $data['id_image']->store(
-                'id_images/' . $admin->id,
+                'Admin/id_images/' . $admin->id,
                 'private'
             );
         }
@@ -98,7 +108,20 @@ class AdminAuthService
             $admin->update($updates);
         }
 
-        return $admin;
+        return [
+            'message' => __('auth.profile_updated'),
+            'data' => new AdminResource($admin),
+            'code' => 200
+        ];
     }
-    
+    public function show(Admin $admin): array
+    {
+
+        return [
+            'status' => 'success',
+            'data' => new AdminResource($admin),
+            'code' => 200
+        ];
+    }
+
 }

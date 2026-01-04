@@ -21,7 +21,7 @@ class DashbourdService
             $query->where('role', $request->role);
         }
 
-        $users = $query->latest()->paginate(20);
+        $users = $query->latest()->get();
 
         return UserResource::collection($users);
     }
@@ -31,5 +31,5 @@ class DashbourdService
 
         return new UserResource($user);
     }
-    
+
 }
