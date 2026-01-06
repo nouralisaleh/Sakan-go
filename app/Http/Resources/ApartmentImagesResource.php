@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BookingResource extends JsonResource
+class ApartmentImagesResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,12 +16,8 @@ class BookingResource extends JsonResource
     {
         return [
             'id'=>$this->id,
-            'user_id'=> $this->user_id,
             'apartment_id'=>$this->apartment_id,
-            'start_date'=>$this->start_date,
-            'end_date'=>$this->end_date,
-            'total_price'=>$this->total_price,
-            'status'=> $this->status,
+            'image_url'=>asset('storage/'.$this->path),
         ];
     }
 }

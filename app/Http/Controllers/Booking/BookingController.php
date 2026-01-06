@@ -59,7 +59,7 @@ class BookingController extends Controller
         {
             return response()->json([
                 'status'=> false,
-                'message'=>'No booking ',
+                'message'=>__('booking.no_exist_booking'),
                 'code'=>200,
             ]);
 

@@ -91,10 +91,7 @@ class ApartmentService
         }
         return $apartment->owner->profile();
     }
-    // public function ownerApartments()
-    // {
 
-    // }
     private function ensureNotBooked(Apartment $apartment): void
 {
     $hasActiveBookings = $apartment->bookings()
@@ -105,6 +102,15 @@ class ApartmentService
         throw new \DomainException('APARTMENT_HAS_ACTIVE_BOOKINGS');
     }
 }
+   public function showAnApartment($apartmentId)
+   {
+       $apartment=Apartment::with('images')->find($apartmentId);
+       if(!$apartment)
+       {
+          throw new ModelNotFoundException('APARTMENT_NOT_FOUND');
+       }
+       return $apartment;
+   }
 
   
     

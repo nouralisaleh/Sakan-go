@@ -1,0 +1,527 @@
+{
+  "base_url": "/api",
+  "authentication": {
+    "type": "Bearer Token",
+    "description": "Bearer token must be sent in the Authorization header for all requests"
+  },
+  "endpoints": [
+    {
+      "name": "Book an Apartment",
+      "method": "POST",
+      "route": "/booking/bookAnApartment/{apartment}",
+      "headers": {
+        "Authorization": "Bearer {user_token}",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      "body": {
+        "start_date": "2025-02-10",
+        "end_date": "2025-02-12"
+      },
+      "success_response": {
+        "status": true,
+        "message": "Your booking has been registered, you must wait for approval.",
+        "data": {
+          "id": 2,
+          "user_id": 12,
+          "apartment_id": 2,
+          "start_date": "2025-02-10",
+          "end_date": "2025-02-12",
+          "total_price": 800000,
+          "status": "pending"
+        },
+        "code": 201
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "No such apartment"
+        },
+        {
+          "status": 409,
+          "message": "Sorry, there is another booking within the same time period."
+        },
+        {
+          "status": 422,
+          "errors": {
+            "start_date": ["start date is required", "the start date must be today or after"],
+            "end_date": ["end date is required", "the end date must be after or equal of start date"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cancel a Booking",
+      "method": "GET",
+      "route": "/booking/cancelAbook/{booking_id}",
+      "headers": {
+        "Authorization": "Bearer {user_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "message": "booking cancelled",
+        "code": 200
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "the booking not found"
+        },
+        {
+          "status": 409,
+          "message": "the booking is already rejected or cancelled"
+        }
+      ]
+    },
+    {
+      "name": "Show User Bookings",
+      "method": "GET",
+      "route": "/booking/showUserBookings",
+      "headers": {
+        "Authorization": "Bearer {user_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "data": [
+          {
+            "id": 2,
+            "user_id": 12,
+            "apartment_id": 2,
+            "start_date": "2025-02-10",
+            "end_date": "2025-02-12",
+            "total_price": 800000,
+            "status": "pending"
+          }
+        ],
+        "code": 200
+      },
+      "empty_response": {
+        "status": false,
+        "message": " no existing booking ",
+        "code": 200
+      }
+    },
+    {
+      "name": "Show A Book",
+      "method": "GET",
+      "route": "/booking/showAbook/{booking_id}",
+      "headers": {
+        "Authorization": "Bearer {user_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "data": {
+          "id": 2,
+          "user_id": 12,
+          "apartment_id": 2,
+          "start_date": "2025-02-10",
+          "end_date": "2025-02-12",
+          "total_price": 800000,
+          "status": "pending"
+        },
+        "code": 200
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "the booking not found"
+        }
+      ]
+    },
+    {
+      "name": "Update Booking",
+      "method": "POST",
+      "route": "/booking/updateBooking/{booking_id}",
+      "headers": {
+        "Authorization": "Bearer {user_token}",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      "body": {
+        "update_start_date": "2025-02-11",
+        "update_end_date": "2025-02-13"
+      },
+      "success_response": {
+        "status": true,
+        "data": {
+          "id": 1,
+          "booking_id": 2,
+          "status": "pending",
+          "update_start_date": "2025-02-11",
+          "update_end_date": "2025-02-13"
+        },
+        "code": 201
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "the booking not found"
+        },
+        {
+          "status": 409,
+          "message": "Sorry, there is another booking within the same time period."
+        },
+        {
+          "status": 422,
+          "errors": {
+            "update_start_date": ["the update start date is required", "the update start date must be after or equal of update start date"],
+            "update_end_date": ["the update end date is required", "the update end date must be after or equal of update start date"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Show User Booking Update Requests",
+      "method": "GET",
+      "route": "/booking/showUserBookingUpdateRequests",
+      "headers": {
+        "Authorization": "Bearer {user_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "data": [
+          {
+            "id": 1,
+            "booking_id": 2,
+            "status": "pending",
+            "update_start_date": "2025-02-11",
+            "update_end_date": "2025-02-13"
+          }
+        ],
+        "code": 200
+      }
+    },
+    {
+      "name": "Show Booking Update Request",
+      "method": "GET",
+      "route": "/booking/showBookingUpdateRequest/{booking_update_request_id}",
+      "headers": {
+        "Authorization": "Bearer {user_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "data": {
+          "id": 1,
+          "booking_id": 2,
+          "status": "pending",
+          "update_start_date": "2025-02-11",
+          "update_end_date": "2025-02-13"
+        },
+        "code": 200
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "booking update request not found"
+        }
+      ]
+    },
+    {
+      "name": "Cancel Booking Update Request",
+      "method": "GET",
+      "route": "/booking/cancelBookingUpdateRequest/{booking_update_request_id}",
+      "headers": {
+        "Authorization": "Bearer {user_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "message": "booking update request cancelled",
+        "code": 200
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "booking update request not found"
+        },
+        {
+          "status": 409,
+          "message": "the booking is already rejected or cancelled"
+        }
+      ]
+    },
+    {
+      "name": "Reject a Booking (Owner)",
+      "method": "GET",
+      "route": "/booking/rejectAbook/{booking_id}",
+      "headers": {
+        "Authorization": "Bearer {owner_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "message": "owner rejected the booking,contact with the owner to learn more",
+        "code": 200
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "the booking not found"
+        },
+        {
+          "status": 409,
+          "message": "the booking is already rejected or cancelled"
+        }
+      ]
+    },
+    {
+      "name": "Approve a Booking (Owner)",
+      "method": "GET",
+      "route": "/booking/approveAbooke/{booking_id}",
+      "headers": {
+        "Authorization": "Bearer {owner_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "data": {
+          "id": 2,
+          "user_id": 12,
+          "apartment_id": 2,
+          "start_date": "2025-02-10",
+          "end_date": "2025-02-12",
+          "total_price": 800000,
+          "status": "confirmed"
+        },
+        "code": 200
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "the booking not found"
+        },
+        {
+          "status": 409,
+          "message": "the booking is already rejected or cancelled"
+        }
+      ]
+    },
+    {
+      "name": "Owner Booking Requests",
+      "method": "GET",
+      "route": "/booking/ownerBookingRequests",
+      "headers": {
+        "Authorization": "Bearer {owner_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "data": [
+          {
+            "id": 2,
+            "user_id": 12,
+            "apartment_id": 2,
+            "start_date": "2025-02-10",
+            "end_date": "2025-02-12",
+            "total_price": 800000,
+            "status": "pending"
+          }
+        ],
+        "code": 200
+      },
+      "error_responses": [
+        {
+          "status": 403,
+          "message": "Only apartment owner is allowed to perform this action"
+        }
+      ]
+    },
+    {
+      "name": "Owner Booking Update Requests",
+      "method": "GET",
+      "route": "/booking/OwnerBookingUpdateRequests",
+      "headers": {
+        "Authorization": "Bearer {owner_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "data": [
+          {
+            "id": 1,
+            "booking_id": 2,
+            "status": "pending",
+            "update_start_date": "2025-02-11",
+            "update_end_date": "2025-02-13"
+          }
+        ],
+        "code": 200
+      }
+    },
+    {
+      "name": "Approve Booking Update Request (Owner)",
+      "method": "GET",
+      "route": "/booking/approveBookingUpdateRequest/{booking_update_request_id}",
+      "headers": {
+        "Authorization": "Bearer {owner_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "message": "booking update request approved",
+        "code": 200
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "booking update request not found"
+        },
+        {
+          "status": 409,
+          "message": "the booking is already rejected or cancelled"
+        }
+      ]
+    },
+    {
+      "name": "Reject Booking Update Request (Owner)",
+      "method": "GET",
+      "route": "/booking/rejectBookingUpdateRequest/{booking_update_request_id}",
+      "headers": {
+        "Authorization": "Bearer {owner_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "message": "booking update request rejected",
+        "code": 200
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "booking update request not found"
+        },
+        {
+          "status": 409,
+          "message": "the booking is already rejected or cancelled"
+        }
+      ]
+    },
+    {
+      "name": "Create Review",
+      "method": "POST",
+      "route": "/review/createReview/{booking_id}",
+      "headers": {
+        "Authorization": "Bearer {user_token}",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      "body": {
+        "stars": 5,
+        "comment": "Great apartment!"
+      },
+      "success_response": {
+        "status": true,
+        "message": "review created successfully",
+        "data": {
+          "id": 1,
+          "user": {
+            "id": 12,
+            "name": "John Doe"
+          },
+          "apartment": {
+            "id": 2,
+            "title": "Beautiful Apartment"
+          },
+          "stars": 5,
+          "comment": "Great apartment!"
+        },
+        "code": 201
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "the booking not found"
+        },
+        {
+          "status": 409,
+          "message": "the review is already exists"
+        },
+        {
+          "status": 409,
+          "message": "the booking must be completed to make review"
+        },
+        {
+          "status": 422,
+          "errors": {
+            "stars": ["the rating is required", "the rating must be an integer", "the rating must be at least 1", "the rating must not be greater than 5"],
+            "comment": ["the comment field must be a text", "the comment must not be more than 1024"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Apartment Average Rating",
+      "method": "GET",
+      "route": "/review/apartmentAverageRating/{apartment_id}",
+      "headers": {
+        "Authorization": "Bearer {user_token}",
+        "Accept": "application/json"
+      },
+      "body": null,
+      "success_response": {
+        "status": true,
+        "message": "review fetched successfully",
+        "data": {
+          "average_rating": 4.5
+        },
+        "code": 200
+      },
+      "error_responses": [
+        {
+          "status": 404,
+          "message": "No such apartment"
+        }
+      ]
+    }
+  ],
+  "booking_status_flow": [
+    "pending",
+    "confirmed",
+    "cancelled",
+    "rejected",
+    "completed"
+  ],
+  "field_definitions": {
+    "booking": {
+      "id": "integer - Unique identifier for the booking",
+      "user_id": "integer - ID of the user who made the booking",
+      "apartment_id": "integer - ID of the booked apartment",
+      "start_date": "string (date) - Start date of the booking (YYYY-MM-DD)",
+      "end_date": "string (date) - End date of the booking (YYYY-MM-DD)",
+      "total_price": "numeric - Total price for the booking period",
+      "status": "string - Status of the booking (pending, confirmed, cancelled, rejected, completed)"
+    },
+    "booking_update_request": {
+      "id": "integer - Unique identifier for the update request",
+      "booking_id": "integer - ID of the related booking",
+      "status": "string - Status of the update request (pending, confirmed, cancelled, rejected)",
+      "update_start_date": "string (date) - Proposed new start date",
+      "update_end_date": "string (date) - Proposed new end date"
+    },
+    "review": {
+      "id": "integer - Unique identifier for the review",
+      "user_id": "integer - ID of the user who created the review",
+      "booking_id": "integer - ID of the related booking",
+      "apartment_id": "integer - ID of the reviewed apartment",
+      "stars": "integer - Rating stars (1-5)",
+      "comment": "string - Optional review comment (max 1024 characters)"
+    }
+  }
+}

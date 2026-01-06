@@ -34,5 +34,7 @@
     'update_request_approved'=>'تم الموافقة على طلب تعديل الحجز',
     'update_request_created'=>'تم انشاء طلب تعديل الحجز,عليك انتظار موافقة المالك',
     'update_request_done_updated'=>'تم تعديل الحجز بناءً على طلبك',
-
+    'booking_owner'=>'يجي ان تكون صاحب الحجز',
+    'booking_not_complete'=>'يجب ان يكون الحجز منتهي  حتى تقوم بالتفييم',
+    'no_exist_booking'=>'لا يوجد حجوزات ',
  ];

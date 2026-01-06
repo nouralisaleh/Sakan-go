@@ -22,8 +22,8 @@ class BookingSeeder extends Seeder
         'status'=>'confirmed',
        ]);
         Booking::create([
-        'apartment_id'=>2,
-        'user_id'=>1,
+        'apartment_id'=>1,
+        'user_id'=>2,
         'start_date'=>date('Y-m-d', strtotime('2026-1-1')),
         'end_date'=>date('Y-m-d', strtotime('2026-1-2')),
         'total_price'=>500,

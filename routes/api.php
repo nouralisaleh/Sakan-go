@@ -13,6 +13,7 @@ use App\Http\Controllers\Apartment\ApartmentController;
 use App\Http\Controllers\Favorite\FavoriteController;
 use App\Http\Controllers\Booking\BookingController;
 use App\Http\Controllers\Booking\BookingUpdateRequestController;
+use App\Http\Controllers\Review\ReviewController;
 
 // /////////////////////////////Admin Routes/////////////////////////////////////////////////////
 
@@ -100,6 +101,8 @@ Route::middleware(['throttle:5,1'])->group(function () {
 
         Route::get('showApartmentOwner/{apartment}',[ApartmentController::class,'apartmentOwner']);
         Route::get('homePage',[ApartmentController::class,'home']);
+        Route::get('showApartmentImages/{apartment}',[ApartmentController::class,'showApartmentImages']);
+        Route::get('showAnApartment/{apartment}',[ApartmentController::class,'showAnApartment']);
         Route::get('addToFavorite/{apartment}',[FavoriteController::class,'toggel']);
 
    });    
@@ -140,6 +143,12 @@ Route::prefix('apartment')->
              Route::get('rejectBookingUpdateRequest/{booking_update_request}',[BookingUpdateRequestController::class,'reject']);
          
     });
+   Route::prefix('review')->middleware('auth:user_api')->group(function () {
+
+          Route::post('createReview/{bookingId}',[ReviewController::class,'store']);
+          Route::get('apartmentAverageRating/{apartment_id}',[ReviewController::class,'getApartmentReview']);
+   
+   });
 
 // //////////////////////////////////Shared////////////////////////////////////////////////////////////
 

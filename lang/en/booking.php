@@ -34,5 +34,9 @@
     'update_request_approved'=>'booking update request approved',
     'update_request_created'=>'booking update request created, you must wait for owner approval',
     'update_request_done_updated'=>'booking updated as your request',
+    'booking_owner'=>'you must be the booking owner',
+    'booking_not_complete'=>'the booking must be completed to make review',
+    'no_exist_booking'=>' no existing booking ',
+
 
  ];

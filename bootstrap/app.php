@@ -80,14 +80,21 @@ return Application::configure(basePath: dirname(__DIR__))
                                 'APARTMENT_HAS_ACTIVE_BOOKINGS'=>__('apartments.booked'),
                                 'BOOKING_CONFLICT'             => __('booking.conflict'),
                                 'BOOKING_ALREADY_FINALIZED'   => __('booking.can_not_reject_or_cancel'),
-                                'NOT_BOOKRD'=>__('booking.not_booked'),
+                                'NOT_BOOKRED'=>__('booking.not_booked'),
                                 'NOT_APARTMENT_OWNER'=>__('auth.only_owner_allowed'),
                                 'FORBIDDEN_ACTION'=>__('auth.forbidden_action'),
+                                'NOT_BOOKING_OWNER'=>__('booking.booking_owner'),
+                                'BOOKING_NOT_COMPLETED'=>__('booking.booking_not_complete'),
+                                'REVIEW_ALREADY_EXISTS'=>__('reviews.review_already_exists'),
 
                                 default                        => __('errors.logic'),
-                            }
-                        ], 422);
-                    });
+                            },
+                            'code' => 409
+                            
+                        ],
+                        
+                     409);
+                });
 
               
 

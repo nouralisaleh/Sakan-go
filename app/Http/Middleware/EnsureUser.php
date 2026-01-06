@@ -27,7 +27,7 @@ class EnsureUser
         if ($user->role !== 'owner') {
             return response()->json([
                 'status' => false,
-                'message' => __('apartments.only_owner_allowed'),
+                'message' => __('apartments.just_owner'),
             ],403 );
         }
 

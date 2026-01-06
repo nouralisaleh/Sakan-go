@@ -32,5 +32,8 @@ class Apartment extends Model
     {
         return $this->hasMany(Favorite::class);
     }
-  
+    public function getAverageRatingAttribute()
+    {
+        return (int)round($this->reviews()->avg('stars'), 0, PHP_ROUND_HALF_UP);
+    }
 }

@@ -25,9 +25,10 @@ class ApartmentSeeder extends Seeder
             'is_furnished'=>true,
             'size'=>100,
            'user_id' =>  1,
-        ])->images()->create([
-            'path'=>'apartments/6/UivhVgexduFzBKngQAvgKi9azg8axYpKPqIpqO7p.jpg'
-        ]);
+        ])->images()->createMany([
+           ['path'=>'apartments/6/2La8XgDEJXYiJAoNcuqkO9MIHMoGBUMJh4eV4f9o.jpg'],
+              ['path'=>'apartments/6/ldD2uqgtFOkGrj39tlkC25Q45HC3PLfKWS5PGAxF.jpg'],
+    ]);
 
         // شقق Omar
         Apartment::create([
@@ -43,7 +44,7 @@ class ApartmentSeeder extends Seeder
             'size'=> 120,
             'user_id' => 2,
         ])->images()->create([
-            'path'=>'apartments/6/UivhVgexduFzBKngQAvgKi9azg8axYpKPqIpqO7p.jpg'
+            'path'=>'apartments/6/NxK8FCDXDhC52r8pUlsoIB8z9cHkoAuHD7pKVKDX.png'
         ]);
 
         Apartment::create([
@@ -58,7 +59,7 @@ class ApartmentSeeder extends Seeder
             'size'=> 130,
             'user_id' => 1,
         ])->images()->create([
-            'path'=>'apartments/6/UivhVgexduFzBKngQAvgKi9azg8axYpKPqIpqO7p.jpg'
+            'path'=>'apartments/5/eSvUOYYxRDxtSxxlNeiJ2VT94qGxVezYI6lp1c7m.jpg'
         ]);
         Apartment::create([
             'title' => 'for university life',

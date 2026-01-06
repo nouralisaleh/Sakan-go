@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
                   //UserProfileSeeder::class,
                   ApartmentSeeder::class,
                   BookingSeeder::class,
+                  ReviewSeeder::class,
           
         ]);    
     }
