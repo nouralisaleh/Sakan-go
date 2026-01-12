@@ -53,27 +53,29 @@ public function showLatest()
 public function home($user)
 {
     return [
-        'latest apartments:'=>[
-            'title'=>'latest apartments added:',
+    
+        'home'=>[  
+        
+        'HomeLatestApartments'=>[
+            'title'=>'latest apartments Added:',
             'apartments'=>$this->showLatest(),
         ],
-        'apartments in Damascuse'=>[
-            'title'=>'apartments in damascuse:',
-             'apartments'=>$this->filter(['city'=>'damascuse'])
+        'HomeApartmentsInDamascus'=>[
+            'title'=>'apartments in Damascuse:',
+             'apartments'=>$this->filter(['city'=>'DAMASCUS'])
         ],
-        'apartments at reasonable price :'=>[
-            'title'=>'apartments in damascuse:',
-             'apartments'=>$this->filter(['min_price'=>600000]),
+        'HomeCheapestApartments'=>[
+            'title'=>'Apartments at Reasonable Price:',
+            'apartments'=>$this->filter(['min_price'=>600000]),
         ], 
-        'furnished apartments:'=>[
+        'HomeFurnishedApartments'=>[
             'title'=>'furnished apartments:',
-            'apartments:'=>$this->filter(['is_furnished'=> true])
-        ],
-        'favorite apartments id:'=>[
+            'apartments'=>$this->filter(['is_furnished'=> true])
+        ]],
+
+        'favoriteApartmentIds'=>
            $user->favoriteApartments()->pluck('apartment_id'),
-        ],
-
-
+        
     ];
 }
 

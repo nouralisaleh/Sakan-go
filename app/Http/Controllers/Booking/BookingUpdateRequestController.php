@@ -30,9 +30,9 @@ class BookingUpdateRequestController extends Controller
         ], 201);
     }
 
-    public function cancel($id, BookingUpdateRequestService $service)
+    public function cancel($booking_update_request, BookingUpdateRequestService $service)
     {
-        $service->cancel($id, auth('user_api')->user());
+        $service->cancel($booking_update_request, auth('user_api')->user());
 
         return response()->json([
             'status' => true,
@@ -41,9 +41,9 @@ class BookingUpdateRequestController extends Controller
         ]);
     }
 
-    public function reject($id, BookingUpdateRequestService $service)
+    public function reject($booking_update_request, BookingUpdateRequestService $service)
     {
-        $service->reject($id, auth('user_api')->user());
+        $service->reject($booking_update_request, auth('user_api')->user());
 
         return response()->json([
             'status' => true,
@@ -52,9 +52,9 @@ class BookingUpdateRequestController extends Controller
         ]);
     }
 
-    public function approve($id, BookingUpdateRequestService $service)
+    public function approve($booking_update_request, BookingUpdateRequestService $service)
     {
-        $service->confirm($id, auth('user_api')->user());
+        $service->confirm($booking_update_request, auth('user_api')->user());
 
         return response()->json([
             'status' => true,
@@ -85,11 +85,11 @@ class BookingUpdateRequestController extends Controller
         ]);
     }
 
-    public function show($id, BookingUpdateRequestService $service)
+    public function show(int $booking_update_request, BookingUpdateRequestService $service)
     {
         return response()->json([
             'status' => true,
-            'data'   => $service->show($id, auth('user_api')->user()),
+            'data'   => $service->show($booking_update_request, auth('user_api')->user()),
             'code'  => 200,
         ]);
     }

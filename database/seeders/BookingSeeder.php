@@ -20,6 +20,9 @@ class BookingSeeder extends Seeder
         'end_date'=>date('Y-m-d', strtotime('2025-1-5')),
         'total_price'=>500,
         'status'=>'confirmed',
+        'longitude'=>31.2357,
+        'latitude'=>30.0444,
+
        ]);
         Booking::create([
         'apartment_id'=>1,
@@ -28,6 +31,8 @@ class BookingSeeder extends Seeder
         'end_date'=>date('Y-m-d', strtotime('2026-1-2')),
         'total_price'=>500,
         'status'=>'confirmed',
+        'longitude'=>31.2357,
+        'latitude'=>30.0444,
        ]);
     }
 }

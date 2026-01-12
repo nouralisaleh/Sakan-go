@@ -37,6 +37,20 @@
     'booking_owner'=>'you must be the booking owner',
     'booking_not_complete'=>'the booking must be completed to make review',
     'no_exist_booking'=>' no existing booking ',
+    'cannot_reject_confirmed'=>'cannot reject a confirmed booking',
+    'cannot_approve_confirmed'=>'the booking is already approved',
+    'payment_method'=>[
+        'required'=>'payment method is required',
+        'type'=>'payment method must be wallet or credit card',
+    ],
+    'longitude'=>[
+        'required'=>'longitude is required',
+        'numeric'=>'longitude must be numeric',
+    ],
+    'latitude'=>[
+        'required'=>'latitude is required',
+        'numeric'=>'latitude must be numeric',
+    ]
 
 
  ];

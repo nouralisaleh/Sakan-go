@@ -115,7 +115,7 @@ public function store(StoreApartmentRequest $request, ApartmentService $service)
     {
        return response()->json ([
             'status'=>true,
-            'data'=>$apartmentFilteringService->home(auth('user_api')->user()),
+             'data'=>$apartmentFilteringService->home(auth('user_api')->user()),
             'code'=>200
         ]);
     }
@@ -136,8 +136,16 @@ public function store(StoreApartmentRequest $request, ApartmentService $service)
             'data'=>ApartmentImagesResource::collection($apartmentImages),
             'code'=>200
         ],200);
-
-    }
+     }
+     public function showOwnerApartments(ApartmentService $service)
+     {
+      $user=auth('user_api')->user();
+      $apartments=$service->showOwnerApartments($user);
+      return response()->json([
+        'status'=>true,
+        'data'=>ApartmentListResource::collection($apartments),
+      ]);
+     }
 
     
 

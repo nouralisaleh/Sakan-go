@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
                   ApartmentSeeder::class,
                   BookingSeeder::class,
                   ReviewSeeder::class,
+                  WalletSeeder::class,
           
         ]);    
     }

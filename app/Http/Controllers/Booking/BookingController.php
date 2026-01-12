@@ -10,7 +10,7 @@ use App\Service\Booking\OwnerConsentService;
 
 class BookingController extends Controller
 {
-    public function store( $apartment,StoreBookingRequest $request,BookingService $bookingService) {
+    public function store(int $apartment,StoreBookingRequest $request,BookingService $bookingService) {
         
             $booking = $bookingService->store(
                 auth('user_api')->id(),
@@ -55,15 +55,16 @@ class BookingController extends Controller
     {
         $user=auth('user_api')->user();
         $bookings=$bookingService->showUserBookings($user);
-        if($bookings->isEmpty())
-        {
-            return response()->json([
-                'status'=> false,
-                'message'=>__('booking.no_exist_booking'),
-                'code'=>200,
-            ]);
+        // if($bookings->isEmpty())
+        // {
+        //     return response()->json([
+        //         'status'=> false,
+        //         'message'=>__('booking.no_exist_booking'),
+        //         'data'=>$boo
+        //         'code'=>200,
+        //     ]);
 
-        }
+        // }
         return response()->json([
             'status'=> true,
             'data'=>bookingResource::collection($bookings),
@@ -96,7 +97,7 @@ class BookingController extends Controller
         $book= $ownerConsentService->approve($booking_id,$user);
         return response()->json([
             'status'=>true,
-            'data'=>$book,
+            'data'=>new BookingResource($book),
             'code'=>200
         ]);
     }

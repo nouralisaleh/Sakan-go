@@ -13,6 +13,7 @@ use App\Http\Controllers\Apartment\ApartmentController;
 use App\Http\Controllers\Favorite\FavoriteController;
 use App\Http\Controllers\Booking\BookingController;
 use App\Http\Controllers\Booking\BookingUpdateRequestController;
+use App\Http\Controllers\Notifications\NotificationsController;
 use App\Http\Controllers\Review\ReviewController;
 
 // /////////////////////////////Admin Routes/////////////////////////////////////////////////////
@@ -82,6 +83,7 @@ Route::prefix('user')->group(function () {
         Route::post('start-chat', [UserController::class, 'startChat']);
         Route::get('user-chats', [UserController::class, 'inbox']);
         Route::get('check-upgrade-status', [UserController::class, 'checkUpgradeStatus']);
+        Route::post('update-fcm-token', [UserAuthController::class, 'updateFcmToken']);
         Route::get('/files/{type}/{user}', [FileController::class, 'show'])
         ->where('type', 'personal|id');
 
@@ -108,7 +110,7 @@ Route::middleware(['throttle:5,1'])->group(function () {
    });    
 Route::prefix('apartment')->
    middleware(['auth:user_api',EnsureUser::class])->group(function () {
-    
+        Route::get('/showOwnerApartments',[ApartmentController::class,'showOwnerApartments']);
         Route::post('/updateApartment/{apartment}',[ApartmentController::class,'update']);
         Route::delete('deleteApartment/{apartment}',[ApartmentController::class,'delete']);
         Route::post('/insertApartment',[ApartmentController::class,'store']);
@@ -150,5 +152,14 @@ Route::prefix('apartment')->
    
    });
 
+    Route::prefix('notification')->middleware('auth:user_api')->group(function () {
+            Route::delete('deleteNotification/{notification}',[NotificationsController::class,'delete']);
+
+            Route::get('getNotifications',[NotificationsController::class,'showAllNotifications']);
+            Route::get('markAsRead/{notification}',[NotificationsController::class,'markAsRead']);
+            Route::get('getUnreadNotifications',[NotificationsController::class,'unread']);
+            Route::get('getReadNotifications',[NotificationsController::class,'read']);
+            Route::get('markAllAsRead',[NotificationsController::class,'markAllAsRead']);
+   });
 // //////////////////////////////////Shared////////////////////////////////////////////////////////////
 

@@ -37,4 +37,16 @@
     'booking_owner'=>'يجي ان تكون صاحب الحجز',
     'booking_not_complete'=>'يجب ان يكون الحجز منتهي  حتى تقوم بالتفييم',
     'no_exist_booking'=>'لا يوجد حجوزات ',
+    'cannot_reject_confirmed'=>'لا يمكن رفض حجز مؤكد',
+    'cannot_approve_confirmed'=>'الحجز بالاصل مقبول',
+    'payment_method'=>[
+        'required'=>'طريقة الدفع مطلوبة',
+        'type'=>'طريقة الدفع يجب ان تكون محفظة او بطاقة ائتمان',
+    ],
+    'longitude'=>[
+        'required'=>'خط الطول مطلوب',
+    ],
+    'latitude'=>[
+        'required'=>'خط العرض مطلوب',],
+
  ];

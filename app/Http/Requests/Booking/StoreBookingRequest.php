@@ -23,8 +23,12 @@ class StoreBookingRequest extends FormRequest
     {
         return [
             'start_date'=>'required|date|after_or_equal:today',
-            'end_date'=>'required|date|after_or_equal:start_date'
-        ];
+            'end_date'=>'required|date|after_or_equal:start_date',
+            'payment_method'=>'required|in:wallet,credit_card',
+            'latitude'=>'required|numeric',
+            'longitude'=>'required|numeric',
+
+            ];
     }
     public function messages(): array
     {
@@ -36,6 +40,14 @@ class StoreBookingRequest extends FormRequest
             'end_date.required'       => __('booking.end_date.required'),
             'end_date.date'           =>  __('booking.date'),
             'end_date.after_or_equal' => __('booking.end_date.after_or_equal'),
+            'latitude.required'       => __('booking.latitude.required'),
+            'latitude.numeric'        => __('booking.latitude.numeric'),
+            'longitude.required'      => __('booking.longitude.required'),
+            'longitude.numeric'       => __('booking.longitude.numeric'),
+            'payment_method.required' => __('booking.payment_method.required'),
+            'payment_method.type'       => __('booking.payment_method.type'),
+
+            
         ];
     }
 }

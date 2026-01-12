@@ -16,65 +16,73 @@ class ApartmentSeeder extends Seeder
          Apartment::create([
             'title' => 'small sudio',
             'description' => 'suitable for young',
-            'city' => 'mzah',
-            'governorate' => 'damascus',
+            'city' => 'DAMASCUS',
+            'governorate' => 'DAMASCUS',
             'rooms' => 1,
-            'area' => 'Autostrad Al Mzah',
+            'area' => 'BARZAH',
             'price' => 90000.00,
             'floor_number'=>3,
             'is_furnished'=>true,
             'size'=>100,
-           'user_id' =>  1,
+            'user_id' =>  2,
         ])->images()->createMany([
-           ['path'=>'apartments/6/2La8XgDEJXYiJAoNcuqkO9MIHMoGBUMJh4eV4f9o.jpg'],
-              ['path'=>'apartments/6/ldD2uqgtFOkGrj39tlkC25Q45HC3PLfKWS5PGAxF.jpg'],
+           ['path'=>'apartments/1/small-juvenile-bedroom-arrangement (1).jpg'],
+              ['path'=>'apartments/1/prydumano-design-t0uOEEuAy1M-unsplash.jpg'],
+              ['path'=>'apartments/1/home-office-with-computer-shelf.jpg'],
+              ['path'=>'apartments/1/prydumano-design-vYlmRFIsCIk-unsplash.jpg'],
+              ['path'=>'apartments/1/prydumano-design-VZ2z8ozzy10-unsplash.jpg']
     ]);
 
         // شقق Omar
         Apartment::create([
             'title' => 'Luxury Apartment',
             'description' => 'Spacious apartment in city center',
-            'city' => 'Cairo',
-            'governorate' => 'Cairo',
+            'city' => 'DAMASCUS',
+            'governorate' => 'DAMASCUS',
             'rooms' => 4,
-            'area' => 'Madinaty',
+            'area' => 'MEZZEH',
             'price' => 400000.00,
             'floor_number'=>3,
             'is_furnished'=>true,
             'size'=> 120,
             'user_id' => 2,
-        ])->images()->create([
-            'path'=>'apartments/6/NxK8FCDXDhC52r8pUlsoIB8z9cHkoAuHD7pKVKDX.png'
+        ])->images()->createMany([
+            ['path'=>'apartments/2/dining-area-comfortable-studio-flat-hotel-room.jpg'],
+            ['path'=>'apartments/2/modern-laundry-room-with-white-appliances-storage.jpg'],
+            ['path'=>'apartments/2/soft-pastel-hues-room-children.jpg'],
+            ['path'=>'apartments/2/studio-arrangement-work.jpg']
         ]);
 
         Apartment::create([
             'title' => 'for honeymoon',
-            'city' => 'damascuse',
-            'governorate' => 'damascuse',
+            'city' => 'DAMASCUS',
+            'governorate' => 'DAMASCUS',
             'rooms' => 4,
-            'area' => 'Al malki',
+            'area' => 'MALKI',
             'price' => 1200000,
             'floor_number'=>3,
             'is_furnished'=>true,
             'size'=> 130,
             'user_id' => 1,
-        ])->images()->create([
-            'path'=>'apartments/5/eSvUOYYxRDxtSxxlNeiJ2VT94qGxVezYI6lp1c7m.jpg'
+        ])->images()->createMany([
+            ['path'=>'apartments/3/frames-for-your-heart-MyeOnGcibCQ-unsplash.jpg'],
+            ['path'=>'apartments/3/huy-nguyen-AB-q9lwCVv8-unsplash.jpg'],
+            ['path'=>'apartments/3/small-juvenile-bedroom-arrangement (2).jpg'],
         ]);
         Apartment::create([
             'title' => 'for university life',
             'description' => 'a quiet area close to transportation',
-            'city' => 'damascuse',
-            'governorate' => 'damascuse',
+            'city' => 'DAMASCUS',
+            'governorate' => 'DAMASCUS',
             'rooms' => 4,
-            'area' => 'kafersosa',
+            'area' => 'KAFR_SOUSEH',
             'price' => 800000,
             'floor_number'=>3,
             'is_furnished'=>true,
             'size'=> 120,
             'user_id' => 1,
         ])->images()->create([
-            'path'=>'apartments/5/eSvUOYYxRDxtSxxlNeiJ2VT94qGxVezYI6lp1c7m.jpg'
+            'path'=>'apartments/10/ja6Ou7xmvIPmND3nYRhfrP4XkxJAuOaZg8NGTn54.jpg'
         ]);
 
     }

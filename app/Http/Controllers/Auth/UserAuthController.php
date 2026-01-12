@@ -138,4 +138,5 @@ class UserAuthController extends Controller
             'code'    => 200,
         ]);
     }
+
 }

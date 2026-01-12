@@ -4,7 +4,6 @@ namespace App\Service\Apartment;
 
 use App\Http\Requests\UpdateApartmentRequest;
 use App\Models\Apartment;
-use App\Models\ApartmentImage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -111,6 +110,11 @@ class ApartmentService
        }
        return $apartment;
    }
+   public function showOwnerApartments($user)
+   {
+      return $user->apartments()->with('images')->get();
+   }
+
 
   
     

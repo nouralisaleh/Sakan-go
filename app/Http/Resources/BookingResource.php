@@ -22,6 +22,12 @@ class BookingResource extends JsonResource
             'end_date'=>$this->end_date,
             'total_price'=>$this->total_price,
             'status'=> $this->status,
+         
+            'payment' => $this->when($this->payment, [
+                'method' => $this->payment?->payment_method,
+                'status' => $this->payment?->payment_status,
+                'amount' => $this->payment?->amount,
+            ]),
         ];
     }
 }

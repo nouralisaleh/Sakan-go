@@ -7,9 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
-
 use Illuminate\Notifications\Notifiable;
+
 
 class User  extends Authenticatable implements JWTSubject
 {
@@ -78,5 +77,16 @@ class User  extends Authenticatable implements JWTSubject
     {
        return $this->hasMany(Favorite::class);
     }
-    
+        public function routeNotificationForFcm()
+    {
+        return $this->fcm_token;
+    }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
 }

@@ -41,7 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'code'    => 422
         ], 422);
     });
-                 $exceptions->render(function (NotFoundHttpException $e) {
+            $exceptions->render(function (NotFoundHttpException $e) {
 
                 return response()->json([
                      'status' => false,
@@ -86,8 +86,11 @@ return Application::configure(basePath: dirname(__DIR__))
                                 'NOT_BOOKING_OWNER'=>__('booking.booking_owner'),
                                 'BOOKING_NOT_COMPLETED'=>__('booking.booking_not_complete'),
                                 'REVIEW_ALREADY_EXISTS'=>__('reviews.review_already_exists'),
+                                'CANNOT_REJECT_CONFIRMED_BOOKING'=>__('booking.cannot_reject_confirmed'),
+                                'CANNOT_APPROVE_CONFIRMED_BOOKING'=>__('booking.cannot_approve_confirmed'),
+                                'INVALID_PAYMENT_STATE'=>__('booking.invalid_payment_state'),
 
-                                default                        => __('errors.logic'),
+                               // default                        => __('errors.logic'),
                             },
                             'code' => 409
                             

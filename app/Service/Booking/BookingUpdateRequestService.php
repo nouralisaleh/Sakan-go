@@ -5,10 +5,18 @@ use App\Models\Booking;
 use App\Models\BookingUpdateRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Notifications\BookingNotifications;
+use App\Service\Notifications\NotificationSender;
+
 use DomainException;
 
 class BookingUpdateRequestService
 {
+    protected  $notificationSender;
+    public function __construct(NotificationSender $notificationSender)
+    {
+        $this->notificationSender = $notificationSender;
+    }
     public function store(int $bookingId, array $data, $user): BookingUpdateRequest
     {
         $booking = Booking::find($bookingId);
@@ -25,7 +33,7 @@ class BookingUpdateRequestService
             throw new DomainException('BOOKING_ALREADY_FINALIZED');
         }
 
-        return DB::transaction(function () use ($booking, $data) {
+        return DB::transaction(function () use ($booking, $data,$user) {
 
             $overlapping = Booking::where('apartment_id', $booking->apartment_id)
                 ->where('id', '!=', $booking->id)
@@ -47,6 +55,7 @@ class BookingUpdateRequestService
                     'end_date'   => $data['update_end_date'],
                 ]);
 
+
                 return BookingUpdateRequest::create([
                     'booking_id'        => $booking->id,
                     'update_start_date' => $data['update_start_date'],
@@ -54,14 +63,24 @@ class BookingUpdateRequestService
                     'status'            => 'confirmed',
                 ]);
             }
+            if (!empty($data['payment_method'])) {
+                    $booking->payment?->update([
+                        'payment_method' => $data['payment_method'],
+                    ]);
+                }
 
-            return BookingUpdateRequest::create([
-                
-                'booking_id'        => $booking->id,
-                'update_start_date' => $data['update_start_date'],
-                'update_end_date'   => $data['update_end_date'],
-                'status'            => 'pending',
-            ]);
+        $updateRequest = BookingUpdateRequest::create([
+                        'booking_id'        => $booking->id,
+                        'update_start_date' => $data['update_start_date'],
+                        'update_end_date'   => $data['update_end_date'],
+                        'status'            => 'pending',
+                    ]);
+          
+            $notification = new BookingNotifications($booking, 'update_request');
+            $this->notificationSender->send($booking->apartment->owner,$notification);
+
+
+            return $updateRequest;
         });
     }
 
@@ -87,6 +106,11 @@ class BookingUpdateRequestService
 
         $request->update(['status' => 'cancelled']);
 
+        $notification = new BookingNotifications($request->booking, 'cancelled');
+
+        $this->notificationSender->send($request->booking->apartment->owner,$notification);
+
+
         return $request;
     }
 
@@ -108,6 +132,9 @@ class BookingUpdateRequestService
         }
 
         $request->update(['status' => 'rejected']);
+
+        $notification = new BookingNotifications($request->booking, 'rejected');
+        $this->notificationSender->send($request->booking->user,$notification);
 
         return $request;
     }
@@ -147,6 +174,10 @@ class BookingUpdateRequestService
                 'start_date' => $request->update_start_date,
                 'end_date'   => $request->update_end_date,
             ]);
+
+            $notification = new BookingNotifications($request->booking, 'approved');
+            $this->notificationSender->send($request->booking->user,$notification);
+
 
             return $request;
         });

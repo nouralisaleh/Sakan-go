@@ -18,6 +18,8 @@ return new class extends Migration
             $table->enum('status', ['pending','cancelled','completed','confirmed','rejected'])->default('pending');
             $table->date('start_date');
             $table->date('end_date');
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
             $table->unsignedInteger('total_price');
             $table->timestamps();
         });
