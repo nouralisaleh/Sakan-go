@@ -81,8 +81,10 @@ class ApartmentSeeder extends Seeder
             'is_furnished'=>true,
             'size'=> 120,
             'user_id' => 1,
-        ])->images()->create([
-            'path'=>'apartments/10/ja6Ou7xmvIPmND3nYRhfrP4XkxJAuOaZg8NGTn54.jpg'
+        ])->images()->createMany([
+            ['path'=>'storage/app/public/apartments/4/photo_3_2026-01-12_22-31-26.jpg'],
+            ['path'=>'storage/app/public/apartments/4/photo_4_2026-01-12_22-31-26.jpg'],
+            ['path'=>'storage/app/public/apartments/4/photo_6_2026-01-12_22-31-26.jpg']
         ]);
 
     }

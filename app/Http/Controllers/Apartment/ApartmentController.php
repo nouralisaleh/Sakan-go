@@ -143,7 +143,7 @@ public function store(StoreApartmentRequest $request, ApartmentService $service)
       $apartments=$service->showOwnerApartments($user);
       return response()->json([
         'status'=>true,
-        'data'=>ApartmentListResource::collection($apartments),
+        'data'=>ApartmentResource::collection($apartments),
       ]);
      }
 
