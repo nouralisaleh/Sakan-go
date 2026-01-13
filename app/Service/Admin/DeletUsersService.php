@@ -23,15 +23,6 @@ class DeletUsersService
     {
         $user = User::withTrashed()->findOrFail($userId);
 
-        if (!$user) {
-
-            return [
-                'status' => false,
-                'message' => 'User not found',
-                'code' => 404
-            ];
-        }
-
         $user->restore();
 
         return [

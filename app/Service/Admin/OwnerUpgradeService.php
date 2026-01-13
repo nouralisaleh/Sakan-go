@@ -25,7 +25,7 @@ class OwnerUpgradeService
             'status' => true,
             'message' => __('auth.approved_request'),
             'data' => [
-                'user_request_status' => 'approved',
+                'request_status' => 'approved',
                 'request_rejected_reason' => null,
             ],
             'code' => 200
@@ -44,7 +44,7 @@ class OwnerUpgradeService
             'status' => true,
             'message' => __('auth.rejected_request'),
             'data' => [
-                'user_request_status' => 'rejected',
+                'request_status' => 'rejected',
                 'request_rejected_reason' => $request->request_rejected_reason,
             ],
             'code' => 200

@@ -22,6 +22,8 @@ class Admin extends Authenticatable implements JWTSubject, CanResetPasswordContr
         'email_verified_at' => 'datetime',
         'birth_date' => 'date',
     ];
+
+    
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -30,5 +32,5 @@ class Admin extends Authenticatable implements JWTSubject, CanResetPasswordContr
     {
         return [];
     }
-    
+
 }

@@ -24,7 +24,7 @@ class AdminLoginRequest extends FormRequest
         return [
             'email.required' => __('validation.required', ['attribute' => 'email']),
             'email.email' => __('validation.email', ['attribute' => 'email']),
-            'email.exists' => __('validation.exists', ['attribute' => 'email']),
+            'email.exists' => __('auth.invalid_credentials'),
             'password.required' => __('validation.required', ['attribute' => 'password']),
             'password.string' => __('validation.string', ['attribute' => 'password']),
             'password.min' => __('validation.min.string', ['attribute' => 'password', 'min' => 8]),

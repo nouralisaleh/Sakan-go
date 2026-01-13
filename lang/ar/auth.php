@@ -41,5 +41,6 @@ return [
     'existing_pending_request'=>'لديك طلب معلق حاليًا.',
     'user_profile_submitted' => 'تم تقديم الملف الشخصي للمستخدم بنجاح وهو قيد الموافقة.',
     'message_body' => 'رمز التحقق الخاص بك هو: :otp.',
+    'wallet_charged' => 'تم شحن محفظة المستخدم بنجاح.',
 
 ];

@@ -40,5 +40,6 @@ return [
     'email_not_found' => 'Email does not exist.',
     'failed_profile' => 'Unauthorized or token expired',
     'message_body' => 'Your verification code is: :otp.',
+    'wallet_charged' => 'User wallet charged successfully.',
 
 ];

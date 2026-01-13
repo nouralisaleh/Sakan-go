@@ -15,18 +15,17 @@ class UserResource extends JsonResource
         'id' => $this->id,
         'status' => $this->status,
         'role'=>$this->role,
-
         'phone' => $this->phone_number,
 
         'profile' => [
             'first_name' => $this->profile?->first_name,
             'last_name'  => $this->profile?->last_name,
             'birth_date' => $this->birth_date ? $this->birth_date->format('Y-m-d') : null,
-            'personal_image' => $this->profile->personal_image
+            'personal_image' => $this->profile?->personal_image
                 ? url(path: "https://weepiest-reclinate-cataleya.ngrok-free.dev/api/user/files/personal/{$this->id}")
                 : null,
 
-            'id_image' => $this->profile->id_image
+            'id_image' => $this->profile?->id_image
                 ? url("https://weepiest-reclinate-cataleya.ngrok-free.dev/api/user/files/id/{$this->id}")
                 : null,
         ],

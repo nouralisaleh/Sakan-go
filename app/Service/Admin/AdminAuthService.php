@@ -17,7 +17,10 @@ class AdminAuthService
         if (!$admin || !Hash::check($data['password'], $admin->password)) {
             return [
                 'message' => __('auth.invalid_credentials'),
-                'code' => 401
+                'errors' => [
+                    'password' => [__('auth.invalid_credentials')],
+                ],
+                'code' => 422
             ];
         }
         /** @var \Tymon\JWTAuth\JWTGuard $guard */
@@ -31,8 +34,8 @@ class AdminAuthService
             'message' => __('auth.logged_in'),
             'data' => [
                 'access_token' => $token,
-                'token_type' => 'bearer',
                 'expires_in' => $guard->factory()->getTTL() * 60,
+                'remember' => $remember
             ],
             'code' => 200
         ];
@@ -78,6 +81,7 @@ class AdminAuthService
                 $updates[$field] = $data[$field];
             }
         }
+
         if (isset($data['personal_image'])) {
 
             if ($admin->personal_image && Storage::disk('private')->exists($admin->personal_image)) {
@@ -86,7 +90,7 @@ class AdminAuthService
             }
 
             $updates['personal_image'] = $data['personal_image']->store(
-                'Admin/personal_images/' . $admin->id,
+                'Admin/personal_images',
                 'private'
             );
         }
@@ -99,7 +103,7 @@ class AdminAuthService
             }
 
             $updates['id_image'] = $data['id_image']->store(
-                'Admin/id_images/' . $admin->id,
+                'Admin/id_images',
                 'private'
             );
         }
@@ -123,5 +127,4 @@ class AdminAuthService
             'code' => 200
         ];
     }
-
 }

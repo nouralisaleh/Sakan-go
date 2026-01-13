@@ -22,11 +22,10 @@ class AdminOtpService
         if ($exitingOtp) {
             $expiresAt = Carbon::parse($exitingOtp->expires_at);
             if (now()->lessThan($expiresAt)) {
-                $second = now()->diffInSeconds($expiresAt);
                 return [
                     'message' => __('auth.otp_already_sent', ['target' => 'email']),
-                    'retry_after' => $second,
-                    'code' => 429
+                    'retry_after' => (int) now()->diffInSeconds($expiresAt),
+                    'code' => 422
                 ];
             }
         }
@@ -39,6 +38,7 @@ class AdminOtpService
                 'is_verified' => false,
                 'is_used' => false,
                 'expires_at' => now()->addMinutes(15),
+                'created_at' => now(),
                 'updated_at' => now(),
             ]
         );
@@ -67,15 +67,16 @@ class AdminOtpService
                     'auth.otp_invalid',
                     ['target' => 'email']
                 ),
-                'code' => 400
+                'code' => 422
             ];
         }
         $expiresAt = Carbon::parse($record->expires_at);
 
         if (now()->greaterThan($expiresAt)) {
             return [
-                'message' => __('auth.otp_expired', ['target' => 'email']),
-                'code' => 400
+                'message' => __('auth.otp_expired',
+                 ['target' => 'email']),
+                'code' => 410
             ];
         }
 
@@ -84,8 +85,10 @@ class AdminOtpService
             ->update(['is_verified' => true]);
 
         return [
-            'message' => __('auth.otp_verified', ['target' => 'email']),
-            'now' => now()->toDateTimeString(),
+            'message' => __(
+                'auth.otp_verified',
+                ['target' => 'email']
+            ),
             'code' => 200
         ];
     }
@@ -129,5 +132,4 @@ class AdminOtpService
             'code' => 200
         ];
     }
-    
 }

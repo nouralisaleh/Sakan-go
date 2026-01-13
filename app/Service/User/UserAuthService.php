@@ -224,7 +224,7 @@ class UserAuthService
             'token' => $token,
             'phone_number' => $phone,
             'country_code' => $country_code,
-            'expires_at' => now()->addHours(4),
+            'expires_at' => now()->addDays(30),
             'created_at' => now(),
         ]);
 
@@ -286,6 +286,7 @@ class UserAuthService
                 'status' => 'pending',
                 'role' => 'tenant',
                 'phone_verified_at' => now(),
+                'rejected_reason'=>null,
             ]
         );
 
@@ -328,7 +329,7 @@ class UserAuthService
         /** @var \Tymon\JWTAuth\JWTGuard $guard */
         $guard = auth('user_api');
         $guard->logout();
-        return[
+        return [
             'status' => true,
             'message' => __('auth.logged_out'),
             'code' => 200
@@ -382,7 +383,7 @@ class UserAuthService
         $user = User::where('phone_number', $session->phone_number)->first();
         if ($user->status === 'pending') {
             return [
-                'status' => 'true',
+                'status' => true,
                 'message' => __('auth.pending'),
                 'data' => [
                     'user_status' => 'pending',
@@ -393,8 +394,9 @@ class UserAuthService
             ];
         }
         if ($user->status === 'rejected') {
+
             return [
-                'status' => 'true',
+                'status' => true,
                 'message' => __('auth.rejected'),
                 'data' => [
                     'user_status' => 'rejected',
@@ -408,10 +410,12 @@ class UserAuthService
 
         /** @var \Tymon\JWTAuth\JWTGuard $guard */
         $guard = auth('user_api');
-        $token = $guard->login($user);
+        $ttl =  60 * 24 * 7;
+        $token = $guard->setTTL($ttl)->login($user);
+
 
         return [
-            'status' => 'true',
+            'status' => true,
             'message' => __('auth.approved'),
             'data' => [
                 'user_status' => 'approved',
@@ -471,4 +475,7 @@ class UserAuthService
         return $user->load('profile');
     }
 
+
 }
+
+

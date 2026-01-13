@@ -2,34 +2,49 @@
 
 namespace App\Service\Admin;
 
+use App\Http\Resources\UserDashResource;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Resources\UserResource;
 
 
 class DashbourdService
 {
-    public function index(Request $request)
-    {
-        $query = User::with('profile');
+public function index(Request $request)
+{
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+    $query = User::with('ownerRequest');
 
-        if ($request->filled('role')) {
-            $query->where('role', $request->role);
-        }
 
-        $users = $query->latest()->get();
-
-        return UserResource::collection($users);
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
     }
+
+
+    if ($request->filled('role')) {
+        $query->where('role', $request->role);
+    }
+
+
+    if ($request->filled('request_status')) {
+        $query->whereHas('ownerRequests', function ($q) use ($request) {
+            $q->where('request_status', $request->request_status);
+        });
+    }
+
+    $users = $query->latest()->get();
+
+    return [
+        'data' => UserDashResource::collection($users),
+        'code' => 200
+    ];
+}
     public function showUser(User $user)
     {
-        $user->load('profile');
+        $user->load('profile', 'ownerRequest');
 
-        return new UserResource($user);
+        return [
+            'data' => new UserDashResource($user),
+        'code' => 200];
     }
 
 }

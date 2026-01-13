@@ -44,6 +44,7 @@ class UserController extends Controller
     {
         $request->validate([
             'apartment_id' => 'required|exists:apartments,id'
+            
         ]);
 
         $user = auth('user_api')->user();

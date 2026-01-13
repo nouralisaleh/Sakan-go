@@ -7,6 +7,9 @@ use App\Http\Controllers\Admin\Admincontroller;
 use  App\Http\Controllers\Auth\UserAuthController;
 use  App\Http\Controllers\File\FileController;
 use App\Http\Controllers\user\UserController;
+use App\Http\Controllers\File\AdminFileController;
+use App\Http\Controllers\File\UserFileController;
+
 use App\Http\Middleware\OtpSessionMiddleware;
 
 // /////////////////////////////Admin Routes/////////////////////////////////////////////////////
@@ -28,7 +31,7 @@ Route::prefix('admin')->group(function () {
     // -------------------
     Route::middleware('auth:admin_api')->group(function () {
         Route::post('logout', [AdminAuthController::class, 'logout']);
-        Route::get('refresh', [AdminAuthController::class, 'refresh']);
+        Route::get('refresh-token', [AdminAuthController::class, 'refresh']);
         Route::get('profile', [AdminAuthController::class, 'profile']);
         Route::post('update-profile', [AdminAuthController::class, 'updateProfile']);
         Route::post('/users/approve', [Admincontroller::class, 'approve']);
@@ -38,8 +41,17 @@ Route::prefix('admin')->group(function () {
         Route::post('/owner-upgrade/approve', [Admincontroller::class, 'approveUpgrade']);
         Route::post('/owner-upgrade/reject', [Admincontroller::class, 'rejectUpgrade']);
         Route::delete('/users/delete', [Admincontroller::class, 'deleteUser']);
-         Route::get('files/{type}/{admin}', [FileController::class, 'show'])
-        ->where('type', 'personal|id');
+        Route::post('/charge-user-wallet', [Admincontroller::class, 'ChargeWallet']);
+        Route::post('/restore-deleted-user', [Admincontroller::class, 'restoreUser']);
+        Route::middleware('auth:admin_api')->group(function () {
+        Route::get(
+        '/files/{type}',
+        [AdminFileController::class, 'show']
+    )->where('type', 'personal|id');
+
+
+
+});
 
     });
 });
@@ -76,9 +88,10 @@ Route::prefix('user')->group(function () {
         Route::post('start-chat', [UserController::class, 'startChat']);
         Route::get('user-chats', [UserController::class, 'inbox']);
         Route::get('check-upgrade-status', [UserController::class, 'checkUpgradeStatus']);
-        Route::get('/files/{type}/{user}', [FileController::class, 'show'])
-        ->where('type', 'personal|id');
-
+        Route::get(
+            '/files/{type}/{user}',
+            [UserFileController::class, 'show']
+        )->where('type', 'personal|id');
     });
 });
 
@@ -88,4 +101,73 @@ Route::middleware(['throttle:5,1'])->group(function () {
 });
 
 // //////////////////////////////////Shared////////////////////////////////////////////////////////////
+
+
+ Route::prefix('apartment')-> middleware(['auth:user_api'])->group(function () {
+
+        Route::get('showApartments',[ApartmentController::class,'show']);
+        Route::post('apartmentFiltering',[ApartmentController::class,'filter']);
+        Route::get('favoriteUserApartments',[FavoriteController::class,'favoriteList']);
+        Route::get('showLatestApartments',[ApartmentController::class,'showLatest']);
+
+        Route::get('showApartmentOwner/{apartment}',[ApartmentController::class,'apartmentOwner']);
+        Route::get('homePage',[ApartmentController::class,'home']);
+        Route::get('showApartmentImages/{apartment}',[ApartmentController::class,'showApartmentImages']);
+        Route::get('showAnApartment/{apartment}',[ApartmentController::class,'showAnApartment']);
+        Route::get('addToFavorite/{apartment}',[FavoriteController::class,'toggel']);
+
+   });
+Route::prefix('apartment')->
+   middleware(['auth:user_api',EnsureUser::class])->group(function () {
+        Route::get('/showOwnerApartments',[ApartmentController::class,'showOwnerApartments']);
+        Route::post('/updateApartment/{apartment}',[ApartmentController::class,'update']);
+        Route::delete('deleteApartment/{apartment}',[ApartmentController::class,'delete']);
+        Route::post('/insertApartment',[ApartmentController::class,'store']);
+
+
+
+
+   });
+
+
+   Route::prefix('booking')->middleware(['auth:user_api'])->group(function () {
+
+          Route::post('bookAnApartment/{apartment}',[BookingController::class,'store']);
+          Route::get('cancelAbook/{booking}',[BookingController::class,'cancel']);
+          Route::get('showUserBookings',[BookingController::class,'showUserBookings']);
+          Route::get('showAbook/{booking}',[BookingController::class,'showABook']);
+
+
+          Route::post('updateBooking/{booking}',[BookingUpdateRequestController::class,'store']);
+          Route::get('showUserBookingUpdateRequests',[BookingUpdateRequestController::class,'showUserBookingUpdateRequests']);
+          Route::get('showBookingUpdateRequest/{booking_update_request}',[BookingUpdateRequestController::class,'show']);
+          Route::get('cancelBookingUpdateRequest/{booking_update_request}',[BookingUpdateRequestController::class,'cancel']);
+
+});
+    Route::prefix('booking')->middleware(['auth:user_api',EnsureUser::class])->group(function () {
+             Route::get('rejectAbook/{booking}',[BookingController::class,'reject']);
+             Route::get('approveAbooke/{booking_id}',[BookingController::class,'approve']);
+             Route::get('ownerBookingRequests',[BookingController::class,'ownerBookingRequests']);
+
+             Route::get('OwnerBookingUpdateRequests',[BookingUpdateRequestController::class,'showOwnerBookingUpdateRequests']);
+             Route::get('approveBookingUpdateRequest/{booking_update_request}',[BookingUpdateRequestController::class,'approve']);
+             Route::get('rejectBookingUpdateRequest/{booking_update_request}',[BookingUpdateRequestController::class,'reject']);
+
+    });
+   Route::prefix('review')->middleware('auth:user_api')->group(function () {
+
+          Route::post('createReview/{bookingId}',[ReviewController::class,'store']);
+          Route::get('apartmentAverageRating/{apartment_id}',[ReviewController::class,'getApartmentReview']);
+
+   });
+
+    Route::prefix('notification')->middleware('auth:user_api')->group(function () {
+            Route::delete('deleteNotification/{notification}',[NotificationsController::class,'delete']);
+
+            Route::get('getNotifications',[NotificationsController::class,'showAllNotifications']);
+            Route::get('markAsRead/{notification}',[NotificationsController::class,'markAsRead']);
+            Route::get('getUnreadNotifications',[NotificationsController::class,'unread']);
+            Route::get('getReadNotifications',[NotificationsController::class,'read']);
+            Route::get('markAllAsRead',[NotificationsController::class,'markAllAsRead']);
+   });
 

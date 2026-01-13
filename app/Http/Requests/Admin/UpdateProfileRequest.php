@@ -17,19 +17,13 @@ class UpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => [
-                'sometimes',
-                'email',
-                Rule::unique('admins', 'email')->ignore($this->user()->id),
-            ],
 
-            'name' => 'sometimes|string|max:100',
-
+            'name' => 'sometimes|string|max:50',
 
             'birth_date' => 'sometimes|date',
 
-            'phone_number'  => 'sometimes|numeric|regex:/^09[3-9]\d{7}/$',
-            'country_code'  => 'sometimes|numeric|regex:/^\+963$/',
+            'phone_number'  => 'sometimes|numeric|regex:/^09[3-9]\d{7}/',
+            'country_code'  => 'sometimes|numeric|regex:/^\+963/',
 
             'personal_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
             'id_image'       => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:4096',
@@ -38,11 +32,9 @@ class UpdateProfileRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.email'       => __('validation.email', ['attribute' => 'email']),
-            'email.unique'      => __('validation.unique', ['attribute' => 'email']),
 
             'name.string' => __('validation.string', ['attribute' => 'name']),
-            'name.max'    => __('validation.max.string', ['attribute' => 'name', 'max' => 100]),
+            'name.max'    => __('validation.max.string', ['attribute' => 'name', 'max' => 50]),
 
             'birth_date.date'   => __('validation.date', ['attribute' => 'birth date']),
 

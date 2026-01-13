@@ -125,5 +125,5 @@ class AdminAuthController extends Controller
             $result['code']
         );
     }
-    
+
 }

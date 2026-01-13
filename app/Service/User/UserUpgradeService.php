@@ -42,6 +42,7 @@ class UserUpgradeService
             ];
         }
         if ($ownerRequest->request_status === 'rejected') {
+
             return [
                 'status' => true,
                 'message' => __('auth.rejected'),
@@ -63,3 +64,6 @@ class UserUpgradeService
         ];
     }
 }
+
+
+
