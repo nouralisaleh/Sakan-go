@@ -34,8 +34,8 @@ class ApartmentResource extends JsonResource
             'owner' => $this->whenLoaded('owner', function () {
                 return [
                     'id' => $this->owner->id,
-                    'name' => $this->owner->name,
-                    'phone' => $this->owner->phone,
+                    'name' => $this->owner->profile ? $this->owner->profile->first_name . ' ' . $this->owner->profile->last_name : null,
+                    'phone' => $this->owner->phone_number,
                 ];
             }),
 

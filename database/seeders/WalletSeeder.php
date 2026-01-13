@@ -15,7 +15,8 @@ class WalletSeeder extends Seeder
     {
      Wallet::create([
         'user_id'=>2,
-        'balance'=>120000000
+        'balance'=>1200000
      ]);
+
     }
 }

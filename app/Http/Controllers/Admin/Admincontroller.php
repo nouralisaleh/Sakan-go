@@ -116,11 +116,11 @@ class Admincontroller extends Controller
             $result['code']
         );
     }
-    public function ChargeWallet(Request $request)
+public function ChargeWallet(Request $request)
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'amount' => 'required|numeric|min:1|max:',
+            'amount' => 'required|numeric|min:1|max:1000000000',
         ]);
         $result = $this->userWalletChargeService->chargeUserWallet($validated['user_id'], $validated['amount']);
         return response()->json(

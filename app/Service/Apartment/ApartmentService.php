@@ -20,7 +20,7 @@ class ApartmentService
 
     public function show()
     {
-        return Apartment::with('images')->latest()->get();
+        return Apartment::with('images','owner.profile')->latest()->get();
     }
 
   public function store(array $data, array $images=[], int $userId): Apartment
@@ -69,7 +69,7 @@ class ApartmentService
    public function delete( $apartment_id): bool
     {
        $apartment=Apartment::find($apartment_id);
-       if( !$apartment )
+       if(!$apartment )
         {
            throw new ModelNotFoundException('APARTMENT_NOT_FOUND');
         } 
@@ -103,7 +103,7 @@ class ApartmentService
 }
    public function showAnApartment($apartmentId)
    {
-       $apartment=Apartment::with('images')->find($apartmentId);
+       $apartment=Apartment::with('images','owner.profile')->find($apartmentId);
        if(!$apartment)
        {
           throw new ModelNotFoundException('APARTMENT_NOT_FOUND');
@@ -112,7 +112,7 @@ class ApartmentService
    }
    public function showOwnerApartments($user)
    {
-      return $user->apartments()->with('images')->get();
+      return $user->apartments()->with('images','owner.profile')->get();
    }
 
 
