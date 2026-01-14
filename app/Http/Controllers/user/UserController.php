@@ -13,6 +13,7 @@ use App\Service\Chat\ChatService;
 class UserController extends Controller
 {
     protected UserUpgradeService $userUpgradeService;
+
     protected ChatService $chatService;
 
     public function __construct(
@@ -34,17 +35,17 @@ class UserController extends Controller
     public function inbox()
     {
         $userId = auth('user_api')->id();
+        $chats = $this->chatService->inbox($userId);
 
-        return response()->json([
-            'status' => true,
-            'data' => $this->chatService->inbox($userId),
-        ], 200);
+        return response()->json(
+            $chats,
+        );
     }
     public function startChat(Request $request, ChatService $chatService)
     {
         $request->validate([
             'apartment_id' => 'required|exists:apartments,id'
-            
+
         ]);
 
         $user = auth('user_api')->user();
@@ -54,15 +55,9 @@ class UserController extends Controller
             $request->apartment_id
         );
 
-        return response()->json([
-            'chat_id' => $chat->id
-        ], 200);
-    }
-    public function restoreUser(Request $request)
-    {
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id'
-        ]);
+        return response()->json(
+           $chat,
+         $chat['code']);
     }
     public function checkUpgradeStatus()
     {
@@ -74,4 +69,5 @@ class UserController extends Controller
             $status['code']
         );
     }
+    
 }

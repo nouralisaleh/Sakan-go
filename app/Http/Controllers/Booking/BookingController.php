@@ -10,6 +10,8 @@ use App\Service\Booking\OwnerConsentService;
 
 class BookingController extends Controller
 {
+
+
     public function store(int $apartment,StoreBookingRequest $request,BookingService $bookingService) {
 
             $booking = $bookingService->store(
@@ -42,7 +44,10 @@ class BookingController extends Controller
     public function cancel($bookingId, BookingService $bookingService)
     {
 
-            $booking = $bookingService->cancel($bookingId);
+            $user=auth('user_api')->user();
+
+
+            $booking = $bookingService->cancel($bookingId,$user);
 
             return response()->json([
                 'status' => true,

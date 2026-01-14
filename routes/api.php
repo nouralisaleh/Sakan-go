@@ -9,6 +9,15 @@ use  App\Http\Controllers\File\FileController;
 use App\Http\Controllers\user\UserController;
 use App\Http\Controllers\File\AdminFileController;
 use App\Http\Controllers\File\UserFileController;
+use App\Http\Middleware\EnsureUser;
+use App\Http\Controllers\Apartment\ApartmentController;
+use App\Http\Controllers\Booking\BookingController;
+use App\Http\Controllers\Booking\BookingUpdateRequestController;
+use App\Http\Controllers\Review\ReviewController;
+use App\Http\Controllers\Notification\NotificationsController;
+use App\Http\Controllers\Favorite\FavoriteController;
+
+
 
 use App\Http\Middleware\OtpSessionMiddleware;
 

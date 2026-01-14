@@ -23,6 +23,8 @@ class ApartmentListResource extends JsonResource
                     'images' => $this->whenLoaded('images', function () {
                         return $this->images->map(fn ($img) => asset('storage/' . $img->path));
                     }),
+                   'is_favorite' => auth('user_api')->check() && $this->favorites()->where('user_id', auth('user_api')->id())->exists()
+
 
                 ];
      }

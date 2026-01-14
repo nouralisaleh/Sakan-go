@@ -17,6 +17,7 @@ class AdminOtpService
         $exitingOtp = DB::table('password_reset_otps')
             ->where('email', $email)
             ->where('is_used', false)
+            ->where('is_verified',false)
             ->first();
 
         if ($exitingOtp) {
@@ -25,7 +26,7 @@ class AdminOtpService
                 return [
                     'message' => __('auth.otp_already_sent', ['target' => 'email']),
                     'retry_after' => (int) now()->diffInSeconds($expiresAt),
-                    'code' => 422
+                    'code' => 429
                 ];
             }
         }

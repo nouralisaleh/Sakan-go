@@ -33,17 +33,18 @@ class AdminAuthController extends Controller
             $request->boolean('remember', false)
         );
 
-        return response()->json([
+        return response()->json(
             $result,
-        ], $result['code']);
+         $result['code']);
     }
     public function logout()
     {
         $result = $this->adminAuthService->logout();
 
-        return response()->json([
-            $result
-        ], $result['code']);
+        return response()->json(
+            $result,
+            $result['code']
+        );
     }
     public function refresh()
     {
@@ -60,10 +61,10 @@ class AdminAuthController extends Controller
 
         $result = $this->adminAuthService->show($admin);
 
-        return response()->json([
+        return response()->json(
             $result,
             $result['code']
-        ]);
+        );
     }
     public function updateProfile(UpdateProfileRequest $request)
     {
@@ -74,10 +75,10 @@ class AdminAuthController extends Controller
             $request->validated() + $request->allFiles()
         );
 
-        return response()->json([
+        return response()->json(
             $updatedAdmin,
             $updatedAdmin['code']
-        ]);
+        );
     }
     public function sendOtp(SendOTPRequest $request)
     {
@@ -86,10 +87,11 @@ class AdminAuthController extends Controller
         try {
             $result = $this->adminOtpService->sendOtp($data['email']);
 
-            return response()->json([
+            return response()->json(
                 $result,
                 $result['code']
-            ]);
+            );
+
         } catch (\Exception $e) {
             return response()->json([
                 'message' => __(

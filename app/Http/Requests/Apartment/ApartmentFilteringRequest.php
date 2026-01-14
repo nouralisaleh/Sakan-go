@@ -9,6 +9,7 @@ class ApartmentFilteringRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
+
     public function authorize(): bool
     {
         return auth('user_api')->check();
@@ -19,9 +20,12 @@ class ApartmentFilteringRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+
+
     public function rules(): array
     {
         return [
+            'query'        => 'sometimes|string|min:1|max:255',
             'city'         => 'sometimes|string|max:128',
             'governorate'  => 'sometimes|string|max:128',
             'rooms'        => 'sometimes|integer|min:1',
@@ -37,27 +41,27 @@ class ApartmentFilteringRequest extends FormRequest
     public function messages()
     {
         return [
-            'city.string'         => __('apartments.validation.city.string'),
-            'city.max'            => __('apartments.validation.city.max'),
+            'city.string'         => ('apartments.validation.city.string'),
+            'city.max'            => ('apartments.validation.city.max'),
 
-            'governorate.string'  => __('apartments.validation.governorate.string'),
-            'governorate.max'     => __('apartments.validation.governorate.max'),
+            'governorate.string'  => ('apartments.validation.governorate.string'),
+            'governorate.max'     => ('apartments.validation.governorate.max'),
 
-            'rooms.integer'       => __('apartments.validation.rooms.integer'),
-            'rooms.min'           => __('apartments.validation.rooms.min'),
+            'rooms.integer'       => ('apartments.validation.rooms.integer'),
+            'rooms.min'           => ('apartments.validation.rooms.min'),
 
-            'area.min'            => __('apartments.validation.area.min'),
-            'area.max'      =>__('apartments.validation.area.max'),
+            'area.min'            => ('apartments.validation.area.min'),
+            'area.max'      =>('apartments.validation.area.max'),
 
-            'floor_number.integer'      =>__('apartments.validation.floor_number.integer'),
-            'floor_number.min'      =>__('apartments.validation.floor_number.min'),
+            'floor_number.integer'      =>('apartments.validation.floor_number.integer'),
+            'floor_number.min'      =>('apartments.validation.floor_number.min'),
 
-            'is_furnished.boolean'  =>__('apartments.validation.is_furnished.boolean'),
+            'is_furnished.boolean'  =>('apartments.validation.is_furnished.boolean'),
 
-            'price.integer'       => __('apartments.validation.price.integer'),
-            'price.min'           => __('apartments.validation.price.min'),
+            'price.integer'       => ('apartments.validation.price.integer'),
+            'price.min'           => ('apartments.validation.price.min'),
 
-           'size.integer'=> __('apartments.validation.size.integer'),
+           'size.integer'=> ('apartments.validation.size.integer'),
 
         ];
     }

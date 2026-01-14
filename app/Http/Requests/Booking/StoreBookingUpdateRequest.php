@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBookingUpdateRequest extends FormRequest
 {
-    /**
+    /** 
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
@@ -24,8 +24,7 @@ class StoreBookingUpdateRequest extends FormRequest
         return [
         'update_start_date'=>'sometimes|date|after_or_equal:today',
         'update_end_date'=>'sometimes|date|after_or_equal:update_start_date',
-        'latitude'=>'sometimes|numeric',
-        'longitude'=>'sometimes|numeric',
+
         'payment_method'=>'sometimes|in:wallet,credit_card',
         ];
     }
@@ -33,13 +32,10 @@ class StoreBookingUpdateRequest extends FormRequest
     {
         return [
 
-        'update_start_date.date'=>__('booking.update_start_date.date'),
-        'update_start_date.after_or_equal'=>__('booking.update_start_date.after_or_equal'),
-
-        'update_end_date.date'=>__('booking.update_end_date.date'),
-        'update_end_date.after_or_equal'=>__('booking.update_end_date.after_or_equal'),
-        'latitude.numeric'=>__('booking.latitude.numeric'),
-        'longitude.numeric'=>__('booking.longitude.numeric'),
+        'update_start_date.date'=>('booking.update_start_date.date'),
+        'update_start_date.after_or_equal'=>('booking.update_start_date.after_or_equal'),
+        'update_end_date.date'=>('booking.update_end_date.date'),
+        'update_end_date.after_or_equal'=>('booking.update_end_date.after_or_equal'),
         'payment_method.type'=>__('booking.payment_method.type'),
         ];
     }

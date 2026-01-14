@@ -35,7 +35,7 @@ class StoreApartmentRequest extends FormRequest
             'is_furnished'=>  'nullable|boolean',
             'size'        =>  'required|integer|min:30',
             'images' => 'required|array|min:1',
-            'images.*'  => 'required|image|mimes:jpg,jpeg,png|max:7134',
+            'images.*'  => 'required|image|mimes:jpg,jpeg,png',
 
         ];
     }
@@ -43,48 +43,48 @@ class StoreApartmentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required'       => __('apartments.validation.title.required'),
-            'title.string'         => __('apartments.validation.title.string'),
-            'title.min'            => __('apartments.validation.title.min'),
-            'title.max'            => __('apartments.validation.title.max'),
+            'title.required'       => ('apartments.validation.title.required'),
+            'title.string'         => ('apartments.validation.title.string'),
+            'title.min'            => ('apartments.validation.title.min'),
+            'title.max'            => ('apartments.validation.title.max'),
 
-            //'description.required' => __('apartments.validation.description.required'),
-            'description.string'   => __('apartments.validation.description.string'),
-            'description.max'      => __('apartments.validation.description.max'),
+            //'description.required' => ('apartments.validation.description.required'),
+            'description.string'   => ('apartments.validation.description.string'),
+            'description.max'      => ('apartments.validation.description.max'),
 
-            'city.required'        => __('apartments.validation.city.required'),
-            'city.string'          => __('apartments.validation.city.string'),
-            'city.max'             => __('apartments.validation.city.max'),
+            'city.required'        => ('apartments.validation.city.required'),
+            'city.string'          => ('apartments.validation.city.string'),
+            'city.max'             => ('apartments.validation.city.max'),
 
-            'governorate.required' => __('apartments.validation.governorate.required'),
-            'governorate.string'   => __('apartments.validation.governorate.string'),
-            'governorate.max'      => __('apartments.validation.governorate.max'),
+            'governorate.required' => ('apartments.validation.governorate.required'),
+            'governorate.string'   => ('apartments.validation.governorate.string'),
+            'governorate.max'      => ('apartments.validation.governorate.max'),
 
-            'rooms.required'       => __('apartments.validation.rooms.required'),
-            'rooms.min'            => __('apartments.validation.rooms.min'),
+            'rooms.required'       => ('apartments.validation.rooms.required'),
+            'rooms.min'            => ('apartments.validation.rooms.min'),
 
-            'area.required'        => __('apartments.validation.area.required'),
-            'area.min'      =>__('apartments.validation.area.min'),
-            'area.max'      =>__('apartments.validation.area.max'),
+            'area.required'        => ('apartments.validation.area.required'),
+            'area.min'      =>('apartments.validation.area.min'),
+            'area.max'      =>('apartments.validation.area.max'),
 
 
-            'floor_number.required'      =>__('apartments.validation.floor_number.required'),
-            'floor_number.integer'      =>__('apartments.validation.floor_number.integer'),
-            'floor_number.min'      =>__('apartments.validation.floor_number.min'),
+            'floor_number.required'      =>('apartments.validation.floor_number.required'),
+            'floor_number.integer'      =>('apartments.validation.floor_number.integer'),
+            'floor_number.min'      =>('apartments.validation.floor_number.min'),
 
-            'is_furnished.boolean'  =>__('apartments.validation.is_furnished.boolean'),
+            'is_furnished.boolean'  =>('apartments.validation.is_furnished.boolean'),
 
-            'price.required'       => __('apartments.validation.price.required'),
-            'price.integer'        => __('apartments.validation.price.integer'),
-            'price.min'            => __('apartments.validation.price.min'),
-           // 'price.max'        =>__('apartment.validation.price.max'),
-           'size.required' => __('apartments.validation.size.required'),
-           'size.integer'=> __('apartments.validation.size.integer'),
+            'price.required'       => ('apartments.validation.price.required'),
+            'price.integer'        => ('apartments.validation.price.integer'),
+            'price.min'            => ('apartments.validation.price.min'),
+           // 'price.max'        =>('apartment.validation.price.max'),
+           'size.required' => ('apartments.validation.size.required'),
+           'size.integer'=> ('apartments.validation.size.integer'),
 
-            'images.array'         => __('apartments.validation.images.array'),
-            'images.required'         => __('apartments.validation.images.required'),
-            'images.*.image'       => __('apartments.validation.images.image'),
-            'images.*.max'         => __('apartments.validation.images.max'),
+            'images.array'         => ('apartments.validation.images.array'),
+            'images.required'         => ('apartments.validation.images.required'),
+            'images.*.image'       => ('apartments.validation.images.image'),
+            'images.*.max'         => ('apartments.validation.images.max'),
         ];
     }
 }
