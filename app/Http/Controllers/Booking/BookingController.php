@@ -7,6 +7,7 @@ use App\Service\Booking\BookingService;
 use App\Http\Requests\Booking\StoreBookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Service\Booking\OwnerConsentService;
+use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
@@ -42,7 +43,7 @@ class BookingController extends Controller
     public function cancel($bookingId, BookingService $bookingService)
     {
     
-            $booking = $bookingService->cancel($bookingId);
+            $booking = $bookingService->cancel($bookingId,auth('user_api')->user());
 
             return response()->json([
                 'status' => true,
@@ -111,8 +112,30 @@ class BookingController extends Controller
             'code'=>200
         ]);
     }
+public function completeBookingPayment(BookingService $bookingService, Request $request)
+{
+    $user = auth('user_api')->user();
+    $validated = $request->validate([
+        'booking_id' => 'required|exists:bookings,id',
+        'payment_method' => 'required|in:wallet,credit_card',
+        'card_number' => 'required_if:payment_method,credit_card|digits:16',
+        'cvv' => 'required_if:payment_method,credit_card|digits:3',
+        'expiry_date' => 'required_if:payment_method,credit_card|date_format:m/y',
+    ]);
 
+    $paymentData = [
+        'method' => $request->payment_method,
+        'card_number' => $request->card_number ?? null,
+    ];
 
+    $booking = $bookingService->completePaymentAndConfirm($request->booking_id, $paymentData, $user);
+
+    return response()->json([
+        'status' => true,
+        'message' => 'تم الدفع وتأكيد الحجز بنجاح',
+        'data' => new BookingResource($booking)
+    ]);
+}
 
 }
 

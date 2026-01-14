@@ -22,6 +22,7 @@ class ApartmentFilteringRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'query'        => 'sometimes|string|min:1|max:255',
             'city'         => 'sometimes|string|max:128',
             'governorate'  => 'sometimes|string|max:128',
             'rooms'        => 'sometimes|integer|min:1',

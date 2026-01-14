@@ -50,7 +50,13 @@
     'latitude'=>[
         'required'=>'latitude is required',
         'numeric'=>'latitude must be numeric',
-    ]
-
+    ],
+    'payment_failed'=>'payment failed',
+    'apartment_not_found'=>'apartment not found',
+    'booking_conflict'=>'sorry, there is another booking within the same time period.',
+    'booking_not_found'=>'booking not found',
+    'booking_already_finalized'=>'the booking is already rejected or cancelled',
+    'booking_already_processed'=>'this booking has been processed previously or is invalid for payment',
+    'less_wallet'=>'insufficient wallet balance',
 
  ];

@@ -17,6 +17,12 @@ class ApartmentFilteringService{
     {
  
     $query = Apartment::query()->with('images');
+    $query->when($filters['query'] ?? null, function ($q, $value) {
+    $q->where(function ($qq) use ($value) {
+        $qq->where('title', 'LIKE', "%{$value}%")
+           ->orWhere('description', 'LIKE', "%{$value}%");
+    });
+});
 
     $query->when($filters['city'] ?? null, fn($q, $v) => $q->where('city', $v));
     $query->when($filters['governorate'] ?? null, fn($q, $v) => $q->where('governorate', $v));
@@ -25,6 +31,10 @@ class ApartmentFilteringService{
     if (array_key_exists('is_furnished', $filters)) {
         $query->where('is_furnished', $filters['is_furnished']);
     }
+    $query->when(
+            array_key_exists('floor_number', $filters),
+            fn ($q) => $q->where('floor_number', $filters['floor_number'])
+        );
 
     if (!empty($filters['rooms'])) {
         $query->where('rooms', $filters['rooms']);
@@ -73,8 +83,8 @@ public function home($user)
             'apartments'=>$this->filter(['is_furnished'=> true])
         ]],
 
-        'favoriteApartmentIds'=>
-           $user->favoriteApartments()->pluck('apartment_id'),
+        // 'favoriteApartmentIds'=>
+        //    $user->favoriteApartments()->pluck('apartment_id'),
         
     ];
 }

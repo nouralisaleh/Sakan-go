@@ -13,5 +13,6 @@ return [
     'update_request'  => 'يوجد طلب تحديث جديد للحجز',
     'pending'         => 'تم إنشاء حجز جديد في انتظار الموافقة',
     'marked_as_read' => 'تم وضع علامة مقروء',
-    'deleted' => 'تم حذف الإشعار'
+    'deleted' => 'تم حذف الإشعار',
+    'notification_not_found'=>'لا يوجد اشعار'
 ];

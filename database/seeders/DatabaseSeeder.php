@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
                   BookingSeeder::class,
                   ReviewSeeder::class,
                   WalletSeeder::class,
+                  PaymentSeeder::class,
+
           
         ]);    
     }

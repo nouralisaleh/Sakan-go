@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Notifications\BookingNotifications;
 use App\Service\Notifications\NotificationSender;
 
+use Carbon\Carbon;
+
+
 use DomainException;
 
 class BookingUpdateRequestService
@@ -75,7 +78,7 @@ class BookingUpdateRequestService
                         'update_end_date'   => $data['update_end_date'],
                         'status'            => 'pending',
                     ]);
-          
+
             $notification = new BookingNotifications($booking, 'update_request');
             $this->notificationSender->send($booking->apartment->owner,$notification);
 
@@ -83,7 +86,6 @@ class BookingUpdateRequestService
             return $updateRequest;
         });
     }
-
     public function cancel(int $UpdateRequestId, $user): BookingUpdateRequest
     {
         $request = BookingUpdateRequest::find($UpdateRequestId);
@@ -109,11 +111,8 @@ class BookingUpdateRequestService
         $notification = new BookingNotifications($request->booking, 'cancelled');
 
         $this->notificationSender->send($request->booking->apartment->owner,$notification);
-
-
         return $request;
     }
-
     public function reject(int $UpdateRequestId, $user): BookingUpdateRequest
     {
         $request = BookingUpdateRequest::find($UpdateRequestId);
@@ -138,58 +137,67 @@ class BookingUpdateRequestService
 
         return $request;
     }
+ public function confirm(int $id, $user): BookingUpdateRequest
+{
+    return DB::transaction(function () use ($id, $user) {
+        $request = BookingUpdateRequest::with('booking.apartment')->findOrFail($id);
 
-    public function confirm(int $id, $user): BookingUpdateRequest
-    {
-        return DB::transaction(function () use ($id, $user) {
+        if ($request->booking->apartment->user_id !== $user->id) {
+            throw new DomainException('NOT_APARTMENT_OWNER');
+        }
 
-            $request = BookingUpdateRequest::find($id);
+        if ($request->status !== 'pending') {
+            throw new DomainException('BOOKING_ALREADY_FINALIZED');
+        }
 
-            if (!$request) {
-                throw new ModelNotFoundException('BOOKING_UPDATE_REQUEST_NOT_FOUND');
-            }
+        // 1. رفض الطلبات المتداخلة الأخرى
+        $this->rejectOverlappingRequests($request);
 
-            if ($request->booking->apartment->user_id !== $user->id) {
-                throw new DomainException('NOT_APARTMENT_OWNER');
-            }
+        // 2. حساب السعر الجديد بناءً على الأيام الجديدة
+        $newPrice = $this->calculateNewPrice($request->booking, $request->update_start_date, $request->update_end_date);
 
-            if ($request->status !== 'pending') {
-                throw new DomainException('BOOKING_ALREADY_FINALIZED');
-            }
+        // 3. تحديث الحجز الأصلي بالبيانات الجديدة والسعر الجديد
+        $request->booking->update([
+            'start_date'  => $request->update_start_date,
+            'end_date'    => $request->update_end_date,
+            'total_price' => $newPrice,
+        ]);
 
-            BookingUpdateRequest::where('id', '!=', $request->id)
-                ->where('status', 'pending')
-                ->whereHas('booking', function ($q) use ($request) {
-                    $q->where('apartment_id', $request->booking->apartment_id)
-                      ->where(function ($qq) use ($request) {
-                          $qq->where('start_date', '<=', $request->update_end_date)
-                             ->where('end_date', '>=', $request->update_start_date);
-                      });
-                })
-                ->update(['status' => 'rejected']);
+        // 4. تحديث سجل الدفع (Amount) ليتوافق مع السعر الجديد
+        $request->booking->payment?->update(['amount' => $newPrice]);
 
-            $request->update(['status' => 'confirmed']);
+        // 5. تحديث حالة طلب التعديل نفسه
+        $request->update(['status' => 'confirmed']);
 
-            $request->booking->update([
-                'start_date' => $request->update_start_date,
-                'end_date'   => $request->update_end_date,
-            ]);
+        // 6. إشعار للمستأجر بقبول التعديل
+        $this->notificationSender->send(
+            $request->booking->user,
+            new BookingNotifications($request->booking, 'approved')
+        );
 
-            $notification = new BookingNotifications($request->booking, 'approved');
-            $this->notificationSender->send($request->booking->user,$notification);
+        return $request;
+    });
+}
 
-
-            return $request;
-        });
-    }
-
+// دالة مساعدة لرفض الطلبات المتداخلة
+private function rejectOverlappingRequests($request) {
+    BookingUpdateRequest::where('id', '!=', $request->id)
+        ->where('status', 'pending')
+        ->whereHas('booking', function ($q) use ($request) {
+            $q->where('apartment_id', $request->booking->apartment_id)
+              ->where(function ($qq) use ($request) {
+                  $qq->where('start_date', '<=', $request->update_end_date)
+                     ->where('end_date', '>=', $request->update_start_date);
+              });
+        })
+        ->update(['status' => 'rejected']);
+}
     public function showOwnerBookingUpdateRequests($user)
     {
         return BookingUpdateRequest::whereHas('booking.apartment', fn ($q) =>
             $q->where('user_id', $user->id)
         )->get();
     }
-
     public function showUserBookingUpdateRequests($user)
     {
         return BookingUpdateRequest::whereHas('booking', fn ($q) =>
@@ -197,6 +205,13 @@ class BookingUpdateRequestService
         )->get();
     }
 
+
+private function calculateNewPrice($booking, $startDate, $endDate): float
+{
+    $days = now()->parse($startDate)->diffInDays(now()->parse($endDate));
+    $days = $days <= 0 ? 1 : $days;
+    return $days * $booking->apartment->price;
+}
     public function show(int $id, $user): BookingUpdateRequest
     {
         $request = BookingUpdateRequest::find($id);
@@ -211,4 +226,5 @@ class BookingUpdateRequestService
 
         return $request;
     }
+
 }

@@ -35,7 +35,7 @@ class StoreApartmentRequest extends FormRequest
             'is_furnished'=>  'nullable|boolean',
             'size'        =>  'required|integer|min:30',
             'images' => 'required|array|min:1',
-            'images.*'  => 'required|image|mimes:jpg,jpeg,png|max:7134',
+            'images.*'  => 'required|image|mimes:jpg,jpeg,png',
 
         ];
     }

@@ -26,7 +26,7 @@ class ApartmentResource extends JsonResource
             'price'         => $this->price,
             'is_furnished'  => (bool) $this->is_furnished,
             'size'          => $this->size,
-
+            'rating'        => $this->getAverageRatingAttribute(),
             'images' => $this->whenLoaded('images', function () {
                 return $this->images->map(fn ($img) => asset('storage/' . $img->path));
             }),
@@ -38,6 +38,7 @@ class ApartmentResource extends JsonResource
                     'phone' => $this->owner->phone_number,
                 ];
             }),
+            'is_favorite' => auth('user_api')->check() && $this->favorites()->where('user_id', auth('user_api')->id())->exists()
 
         ];
     }

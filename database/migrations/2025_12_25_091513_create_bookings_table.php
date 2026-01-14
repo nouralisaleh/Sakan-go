@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('apartment_id')->constrained('apartments')->cascadeOnDelete();
-            $table->enum('status', ['pending','cancelled','completed','confirmed','rejected'])->default('pending');
+            $table->enum('status', ['pending','cancelled','completed','confirmed','rejected','waiting_payment'])->default('pending');
             $table->date('start_date');
             $table->date('end_date');
             $table->decimal('latitude', 10, 7)->nullable();

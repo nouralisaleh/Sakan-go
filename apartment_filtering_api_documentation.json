@@ -1,0 +1,151 @@
+{
+  "api_name": "Apartment Filtering API",
+  "version": "1.0",
+  "base_url": "/api/apartment",
+  "authentication": "Bearer token (auth:user_api)",
+  "endpoints": [
+    {
+      "endpoint": "/apartmentFiltering",
+      "method": "POST",
+      "description": "Filter apartments based on various criteria",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {token}",
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "query": {
+            "type": "string",
+            "required": false,
+            "description": "Search query for title or description"
+          },
+          "city": {
+            "type": "string",
+            "required": false,
+            "description": "Filter by city name"
+          },
+          "governorate": {
+            "type": "string",
+            "required": false,
+            "description": "Filter by governorate"
+          },
+          "area": {
+            "type": "string",
+            "required": false,
+            "description": "Filter by area"
+          },
+          "is_furnished": {
+            "type": "boolean",
+            "required": false,
+            "description": "Filter by furnished status (true/false)"
+          },
+          "floor_number": {
+            "type": "integer",
+            "required": false,
+            "description": "Filter by floor number"
+          },
+          "rooms": {
+            "type": "integer",
+            "required": false,
+            "description": "Filter by number of rooms"
+          },
+          "min_price": {
+            "type": "number",
+            "required": false,
+            "description": "Minimum price filter"
+          },
+          "max_price": {
+            "type": "number",
+            "required": false,
+            "description": "Maximum price filter"
+          },
+          "size": {
+            "type": "number",
+            "required": false,
+            "description": "Filter by apartment size"
+          }
+        }
+      },
+      "response": {
+        "success_status": 200,
+        "success_response": {
+          "status": true,
+          "data": [
+            {
+              "id": 1,
+              "title": "Beautiful Apartment",
+              "city": "DAMASCUS",
+              "governorate": "DAMASCUS",
+              "price": 1000000,
+              "images": [
+                "http://localhost:8000/storage/apartment_images/image1.jpg",
+                "http://localhost:8000/storage/apartment_images/image2.jpg"
+              ]
+            }
+          ],
+          "code": 200
+        },
+        "no_results_response": {
+          "status": false,
+          "message": "no_contant",
+          "code": 200
+        },
+        "error_responses": [
+          {
+            "status": 401,
+            "message": "Unauthenticated"
+          },
+          {
+            "status": 422,
+            "message": "Validation errors",
+            "errors": {
+              "city": ["The city field is required."],
+              "min_price": ["The min_price must be a number."]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "filter_parameters": {
+    "query": "Search in title and description",
+    "city": "City name (e.g., DAMASCUS)",
+    "governorate": "Governorate name",
+    "area": "Area name",
+    "is_furnished": "Boolean (true for furnished, false for unfurnished)",
+    "floor_number": "Integer representing floor number",
+    "rooms": "Integer representing number of rooms",
+    "min_price": "Numeric minimum price",
+    "max_price": "Numeric maximum price",
+    "size": "Numeric apartment size"
+  },
+  "example_requests": [
+    {
+      "description": "Filter by city",
+      "request": {
+        "city": "DAMASCUS"
+      }
+    },
+    {
+      "description": "Filter by price range",
+      "request": {
+        "min_price": 500000,
+        "max_price": 2000000
+      }
+    },
+    {
+      "description": "Filter by furnished status and rooms",
+      "request": {
+        "is_furnished": true,
+        "rooms": 3
+      }
+    },
+    {
+      "description": "Search by query",
+      "request": {
+        "query": "luxury apartment"
+      }
+    }
+  ]
+}

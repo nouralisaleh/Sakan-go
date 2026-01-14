@@ -48,5 +48,12 @@
     ],
     'latitude'=>[
         'required'=>'خط العرض مطلوب',],
+    'payment_failed'=>'فشلت عملية الدفع' ,
+    'apartment_not_found'=>'الشقة غير موجودة',
+    'booking_conflict'=>'عذراً، يوجد حجز آخر ضمن نفس الفترة الزمنية.',
+    'booking_not_found'=>'الحجز غير موجود',
+    'booking_already_finalized'=>'الحجز بالاصل مرفوض من المالك او ملغى',
+    'booking_already_processed'=>'هذا الحجز تمت معالجته مسبقاً أو غير صالح للدفع',
+    'less_wallet'=>'رصيد المحفظة غير كافي',
 
  ];

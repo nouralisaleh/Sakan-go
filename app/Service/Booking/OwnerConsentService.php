@@ -2,77 +2,49 @@
 
 namespace App\Service\Booking;
 
+
+
 use App\Models\Booking;
+
 use Illuminate\Support\Facades\DB;
+
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 use App\Notifications\BookingNotifications;
+
 use App\Service\Notifications\NotificationSender;
 
+
+
 class OwnerConsentService
+
 {
-    protected NotificationSender $notificationSender;
 
-    public function __construct(NotificationSender $notificationSender)
-    {
-        $this->notificationSender = $notificationSender;
-    }
+    public function __construct(
 
-    public function approve(int $bookingId, $owner)
+        protected NotificationSender $notificationSender
+
+    ) {}
+
+
+
+    public function approve(int $bookingId, $owner): Booking
     {
+
         return DB::transaction(function () use ($bookingId, $owner) {
-
-            $booking = Booking::lockForUpdate()->find($bookingId);
-            if (!$booking) {
-                throw new ModelNotFoundException('BOOKING_NOT_FOUND');
-            }
+            // قفل السطر للتأكد من عدم حدوث تغيير متزامن
+            $booking = Booking::with('apartment')->lockForUpdate()->findOrFail($bookingId);
 
             if ($booking->apartment->user_id !== $owner->id) {
                 throw new \DomainException('NOT_APARTMENT_OWNER');
             }
 
+            // لا يمكن الموافقة إلا إذا كان الطلب معلقاً
             if ($booking->status !== 'pending') {
-                throw new \DomainException('BOOKING_ALREADY_FINALIZED');
+                throw new \DomainException('BOOKING_ALREADY_PROCESSED');
             }
 
-            Booking::where('apartment_id', $booking->apartment_id)
-                ->where('id', '!=', $booking->id)
-                ->where('status', 'pending')
-                ->where(function ($q) use ($booking) {
-                    $q->where('start_date', '<=', $booking->end_date)
-                      ->where('end_date', '>=', $booking->start_date);
-                })
-                ->update(['status' => 'rejected']);
-
-            $payment = $booking->payment;
-            if (!$payment || $payment->payment_status !== 'pending') {
-                throw new \DomainException('INVALID_PAYMENT_STATE');
-            }
-
-            /** ======================
-             *  محاكاة الدفع
-             *  ======================
-             */
-            if ($payment->payment_method === 'wallet') {
-                $wallet = $booking->user->wallet;
-
-                if (!$wallet || $wallet->balance < $payment->amount) {
-                    throw new \DomainException('INSUFFICIENT_WALLET_BALANCE');
-                }
-
-               $wallet->decrement('balance', $payment->amount);
-
-            } elseif ($payment->payment_method === 'credit_card') {
-                // محاكاة نجاح بطاقة
-                // لا شي حقيقي
-            }
-
-            $payment->update([
-                'payment_status' => 'completed',
-            ]);
-
-            $booking->update([
-                'status' => 'confirmed',
-            ]);
+            $booking->update(['status' => 'waiting_payment']);
 
             $notification = new BookingNotifications($booking, 'approved');
             $this->notificationSender->send($booking->user, $notification);
@@ -81,27 +53,28 @@ class OwnerConsentService
         });
     }
 
-    public function reject(int $bookingId, $owner)
+    public function reject(int $bookingId, $owner): Booking
+
     {
+
         $booking = Booking::find($bookingId);
-        if (!$booking) {
-            throw new ModelNotFoundException('BOOKING_NOT_FOUND');
-        }
+
+        if (!$booking) throw new ModelNotFoundException('BOOKING_NOT_FOUND');
+
+
 
         if ($booking->apartment->user_id !== $owner->id) {
+
             throw new \DomainException('NOT_APARTMENT_OWNER');
         }
 
+
+
         $booking->update(['status' => 'rejected']);
 
-        if ($booking->payment) {
-            $booking->payment->update([
-                'payment_status' => 'failed'
-            ]);
-        }
+        $booking->payment?->update(['payment_status' => 'failed']);
 
-        $notification = new BookingNotifications($booking, 'rejected');
-        $this->notificationSender->send($booking->user, $notification);
+
 
         return $booking;
     }

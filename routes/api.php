@@ -15,6 +15,7 @@ use App\Http\Controllers\Booking\BookingController;
 use App\Http\Controllers\Booking\BookingUpdateRequestController;
 use App\Http\Controllers\Notifications\NotificationsController;
 use App\Http\Controllers\Review\ReviewController;
+use Illuminate\Database\Eloquent\Attributes\Boot;
 
 // /////////////////////////////Admin Routes/////////////////////////////////////////////////////
 
@@ -151,6 +152,10 @@ Route::prefix('apartment')->
           Route::get('apartmentAverageRating/{apartment_id}',[ReviewController::class,'getApartmentReview']);
    
    });
+   Route::prefix('payment')->middleware('auth:user_api')->group(function (){
+        Route::post('completeBookingPayment',[BookingController::class,'completeBookingPayment']);
+
+   });
 
     Route::prefix('notification')->middleware('auth:user_api')->group(function () {
             Route::delete('deleteNotification/{notification}',[NotificationsController::class,'delete']);
@@ -161,5 +166,6 @@ Route::prefix('apartment')->
             Route::get('getReadNotifications',[NotificationsController::class,'read']);
             Route::get('markAllAsRead',[NotificationsController::class,'markAllAsRead']);
    });
+
 // //////////////////////////////////Shared////////////////////////////////////////////////////////////
 

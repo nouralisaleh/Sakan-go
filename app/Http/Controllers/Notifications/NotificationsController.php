@@ -1,54 +1,93 @@
 <?php
 
 namespace App\Http\Controllers\Notifications;
+
 use App\Http\Controllers\Controller;
 use App\Http\Resources\NotificationResource;
-use Illuminate\Http\Request;
+use App\Service\Notifications\NotificationService;
+use Illuminate\Http\JsonResponse;
 
 class NotificationsController extends Controller
 {
-    public function showAllNotifications()
+    protected NotificationService $notificationService;
+
+    public function __construct(NotificationService $notificationService)
     {
-      $user=auth('user_api')->user();
+        $this->notificationService = $notificationService;
+    }
+
+    public function showAllNotifications(): JsonResponse
+    {
+        $user = auth('user_api')->user();
+        $notifications = $this->notificationService->getAllNotifications($user);
+
         return response()->json([
-            'unread' =>NotificationResource::collection($user->unreadNotifications),
-            'read'   =>NotificationResource::collection($user->readNotifications),
-        ]);
+            'status' => true,
+            'data'   => [
+                'unread' => NotificationResource::collection($notifications['unread']),
+                'read'   => NotificationResource::collection($notifications['read']),
+            ],
+            'code'   => 200
+        ], 200);
     }
 
-    public function unread()
+    public function unread(): JsonResponse
     {
-        return new NotificationResource(auth('user_api')->user()->unreadNotifications);
-    }
-    public function read()
-    {
-        return new NotificationResource(auth('user_api')->user()->readNotifications);
-    }
+        $user = auth('user_api')->user();
+        $notifications = $this->notificationService->getUnreadNotifications($user);
 
-    public function markAsRead(string $id)
-    {
-        $notification = auth('user_api')->user()->notifications->where('id', $id)->first();
-
-        $notification->markAsRead();
-
-        return response()->json(['message' => __('notifications.marked_as_read')]);
+        return response()->json([
+            'status' => true,
+            'data'   => NotificationResource::collection($notifications),
+            'code'   => 200
+        ], 200);
     }
 
-    public function markAllAsRead()
+    public function read(): JsonResponse
     {
-        auth('user_api')->user()->unreadNotifications->markAsRead();
+        $user = auth('user_api')->user();
+        $notifications = $this->notificationService->getReadNotifications($user);
 
-        return response()->json(['message' => __('notifications.marked_as_read')]);
+        return response()->json([
+            'status' => true,
+            'data'   => NotificationResource::collection($notifications),
+            'code'   => 200
+        ], 200);
     }
 
-    public function delete(string $id,)
+    public function markAsRead(string $id): JsonResponse
     {
-       
-       $notification=auth('user_api')->user()
-            ->notifications
-            ->where('id', $id)
-            ->delete();    
+        $user = auth('user_api')->user();
+        $this->notificationService->markAsRead($user, $id);
 
-        return response()->json(['message' => __('notifications.deleted')]);
+        return response()->json([
+            'status'  => true,
+            'message' => __('notifications.marked_as_read'),
+            'code'    => 200
+        ], 200);
+    }
+
+    public function markAllAsRead(): JsonResponse
+    {
+        $user = auth('user_api')->user();
+        $this->notificationService->markAllAsRead($user);
+
+        return response()->json([
+            'status'  => true,
+            'message' => __('notifications.marked_as_read'),
+            'code'    => 200
+        ], 200);
+    }
+
+    public function delete(string $id): JsonResponse
+    {
+        $user = auth('user_api')->user();
+        $this->notificationService->deleteNotification($user, $id);
+
+        return response()->json([
+            'status'  => true,
+            'message' => __('notifications.deleted'),
+            'code'    => 200
+        ], 200);
     }
 }

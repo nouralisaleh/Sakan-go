@@ -1,0 +1,271 @@
+{
+  "api_name": "Notification API",
+  "version": "1.0",
+  "base_url": "/api/notification",
+  "authentication": "Bearer token (auth:user_api)",
+  "endpoints": [
+    {
+      "endpoint": "/getNotifications",
+      "method": "GET",
+      "description": "Get all notifications (read and unread)",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {token}",
+          "Accept": "application/json"
+        },
+        "parameters": {}
+      },
+      "response": {
+        "success_status": 200,
+        "success_response": {
+          "unread": [
+            {
+              "id": "notification_id",
+              "data": {
+                "notification": {
+                  "title": "localized_title",
+                  "body": "localized_body"
+                },
+                "data": {
+                  "type": "booking",
+                  "action": "new",
+                  "booking_id": "booking_id",
+                  "apartment_id": "apartment_id",
+                  "user_role": "owner"
+                }
+              }
+          
+            }
+          ],
+          "read": [
+            {
+              "id": "notification_id",
+              "type": "notification_type",
+              "notifiable_type": "App\\Models\\User",
+              "notifiable_id": "user_id",
+              "data": {
+                "notification": {
+                  "title": "localized_title",
+                  "body": "localized_body"
+                },
+                "data": {
+                  "type": "booking",
+                  "action": "approved",
+                  "booking_id": "booking_id",
+                  "apartment_id": "apartment_id",
+                  "user_role": "tenant"
+                }
+              },
+              "read_at": "2024-01-01T00:00:00.000000Z",
+              "created_at": "2024-01-01T00:00:00.000000Z",
+              "updated_at": "2024-01-01T00:00:00.000000Z"
+            }
+          ]
+        },
+        "error_responses": [
+          {
+            "status": 401,
+            "message": "Unauthenticated"
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "/getUnreadNotifications",
+      "method": "GET",
+      "description": "Get only unread notifications",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {token}",
+          "Accept": "application/json"
+        },
+        "parameters": {}
+      },
+      "response": {
+        "success_status": 200,
+        "success_response": [
+          {
+            "id": "notification_id",
+            "type": "notification_type",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": "user_id",
+            "data": {
+              "notification": {
+                "title": "localized_title",
+                "body": "localized_body"
+              },
+              "data": {
+                "type": "booking",
+                "action": "new",
+                "booking_id": "booking_id",
+                "apartment_id": "apartment_id",
+                "user_role": "owner"
+              }
+            },
+            "read_at": null,
+            "created_at": "2024-01-01T00:00:00.000000Z",
+            "updated_at": "2024-01-01T00:00:00.000000Z"
+          }
+        ],
+        "error_responses": [
+          {
+            "status": 401,
+            "message": "Unauthenticated"
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "/getReadNotifications",
+      "method": "GET",
+      "description": "Get only read notifications",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {token}",
+          "Accept": "application/json"
+        },
+        "parameters": {}
+      },
+      "response": {
+        "success_status": 200,
+        "success_response": [
+          {
+            "id": "notification_id",
+            "type": "notification_type",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": "user_id",
+            "data": {
+              "notification": {
+                "title": "localized_title",
+                "body": "localized_body"
+              },
+              "data": {
+                "type": "booking",
+                "action": "approved",
+                "booking_id": "booking_id",
+                "apartment_id": "apartment_id",
+                "user_role": "tenant"
+              }
+            },
+            "read_at": "2024-01-01T00:00:00.000000Z",
+            "created_at": "2024-01-01T00:00:00.000000Z",
+            "updated_at": "2024-01-01T00:00:00.000000Z"
+          }
+        ],
+        "error_responses": [
+          {
+            "status": 401,
+            "message": "Unauthenticated"
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "/markAsRead/{notification}",
+      "method": "GET",
+      "description": "Mark a specific notification as read",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {token}",
+          "Accept": "application/json"
+        },
+        "parameters": {
+          "notification": {
+            "type": "string",
+            "required": true,
+            "description": "Notification ID"
+          }
+        }
+      },
+      "response": {
+        "success_status": 200,
+        "success_response": {
+          "message": "marked_as_read"
+        },
+        "error_responses": [
+          {
+            "status": 401,
+            "message": "Unauthenticated"
+          },
+          {
+            "status": 404,
+            "message": "Notification not found"
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "/markAllAsRead",
+      "method": "GET",
+      "description": "Mark all unread notifications as read",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {token}",
+          "Accept": "application/json"
+        },
+        "parameters": {}
+      },
+      "response": {
+        "success_status": 200,
+        "success_response": {
+          "message": "marked_as_read"
+        },
+        "error_responses": [
+          {
+            "status": 401,
+            "message": "Unauthenticated"
+          }
+        ]
+      }
+    },
+    {
+      "endpoint": "/deleteNotification/{notification}",
+      "method": "DELETE",
+      "description": "Delete a specific notification",
+      "request": {
+        "headers": {
+          "Authorization": "Bearer {token}",
+          "Accept": "application/json"
+        },
+        "parameters": {
+          "notification": {
+            "type": "string",
+            "required": true,
+            "description": "Notification ID"
+          }
+        }
+      },
+      "response": {
+        "success_status": 200,
+        "success_response": {
+          "message": "deleted"
+        },
+        "error_responses": [
+          {
+            "status": 401,
+            "message": "Unauthenticated"
+          },
+          {
+            "status": 404,
+            "message": "Notification not found"
+          }
+        ]
+      }
+    }
+  ],
+  "notification_types": [
+    {
+      "type": "booking",
+      "actions": [
+        "new",
+        "approve",
+        "reject",
+        "cancel",
+        "update_request",
+        "update_approved",
+        "update_rejected"
+      ]
+    },
+    {
+      "type": "payment",
+      "actions": [

@@ -31,8 +31,9 @@ class ApartmentController extends Controller
       return response()->json([
         'status' => true,
         'data'=> apartmentListResource::collection($apartments),
+        'code'=>200
     
-    ]);
+    ],200);
      
     }
 public function store(StoreApartmentRequest $request, ApartmentService $service)
@@ -91,6 +92,7 @@ public function store(StoreApartmentRequest $request, ApartmentService $service)
         return response()->json([
             'status'=>true,
             'data' =>apartmentListResource::collection($filter),
+            'code'=>200
  
     ]);
     
@@ -144,6 +146,7 @@ public function store(StoreApartmentRequest $request, ApartmentService $service)
       return response()->json([
         'status'=>true,
         'data'=>ApartmentResource::collection($apartments),
+        'code'=>200,
       ]);
      }
 

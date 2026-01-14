@@ -67,6 +67,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         'BOOKING_NOT_FOUND'   => __('booking.not_found'),
                         'BOOKING_UPDATE_REQUEST_NOT_FOUND' => __('booking.update_request_not_found'),
                         'APARTMENT_HAS_ACTIVE_BOOKINGS'=>__('apartments.booked'),
+
                         default     => __('errors.not_found'),
                     },
                     'code' => 404,
@@ -89,8 +90,15 @@ return Application::configure(basePath: dirname(__DIR__))
                                 'CANNOT_REJECT_CONFIRMED_BOOKING'=>__('booking.cannot_reject_confirmed'),
                                 'CANNOT_APPROVE_CONFIRMED_BOOKING'=>__('booking.cannot_approve_confirmed'),
                                 'INVALID_PAYMENT_STATE'=>__('booking.invalid_payment_state'),
+                                'payment_failed_booking_cancelled'=>__('booking.payment_failed'),
+                                'LESS_WALLET'=>__('booking.less_wallet'),
+                                'PAYMENT_FAILED'=>__('booking.payment_failed'),
+                                'BOOKING_UN_PROSSED'=>__('booking.booking_already_processed'),
+                                'NOTIFICATION_NOT_FOUND'=>__('notifications.notification_not_found'),
 
-                               // default                        => __('errors.logic'),
+                            
+
+                               default                        => __('errors.logic'),
                             },
                             'code' => 409
                             
